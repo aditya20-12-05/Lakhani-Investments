@@ -1,241 +1,195 @@
-/* Interactive hero canvas — particle field + growth curve + reactive bars.
-   Reacts to cursor; degrades to a calm auto-animation without a pointer. */
+/* Interactive intro — cursor-built logo constellation.
+   Particles drift as dust; as the cursor nears the centre they assemble into
+   the Lakhani mark (ascending bars + rising arrow), then dissolve when it
+   leaves. Auto-assembles once on load, and breathes gently without a pointer. */
 (function () {
-  const canvas = document.getElementById("hero-canvas");
+  const canvas = document.getElementById("logo-canvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const BLUE = "0, 88, 168";
-  const GREEN = "0, 128, 64";
-  const GREEN_SOFT = "46, 158, 91";
+  const C = {
+    bar1: "141,181,160", // #8db5a0
+    bar2: "46,158,91",   // #2e9e5b
+    bar3: "0,128,64",    // #008040
+    bar4: "0,102,58",    // #00663a
+    blue: "0,88,168",    // #0058a8
+  };
 
   let W = 0, H = 0, DPR = 1;
   let particles = [];
-  let bars = [];
+  let targets = [];
+  let pairs = [];
+  let scale = 1;
   const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false };
   let t = 0;
+  let globalA = 0;
+  let introUntil = performance.now() + 2600; // hold the logo briefly on load
   let running = true;
 
-  function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.getBoundingClientRect();
-    W = rect.width;
-    H = rect.height;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    initParticles();
-    initBars();
+  const smooth = (x) => x * x * (3 - 2 * x);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  // ----- build target points from the logo geometry (normalised space) -----
+  function buildModel() {
+    const m = [];
+    const baseY = 64, step = 4;
+    function bar(x0, w, topY, color) {
+      for (let yy = topY; yy <= baseY; yy += step)
+        for (let xx = x0; xx <= x0 + w; xx += step) m.push({ nx: xx, ny: yy, color });
+    }
+    bar(6, 14, 40, C.bar1);
+    bar(24, 14, 30, C.bar2);
+    bar(42, 14, 20, C.bar3);
+    bar(60, 14, 12, C.bar4);
+    // rising arrow polyline + arrowhead
+    const segs = [
+      [[4, 38], [20, 20]], [[20, 20], [30, 28]], [[30, 28], [52, 6]],
+      [[52, 6], [42, 8]], [[52, 6], [50, 19]],
+    ];
+    segs.forEach(([[ax, ay], [bx, by]]) => {
+      const len = Math.hypot(bx - ax, by - ay);
+      const n = Math.max(2, Math.round(len / 3));
+      for (let i = 0; i <= n; i++) {
+        const k = i / n;
+        m.push({ nx: ax + (bx - ax) * k, ny: ay + (by - ay) * k, color: C.blue });
+      }
+    });
+    return m;
+  }
+  const MODEL = buildModel();
+
+  function layout() {
+    const box = Math.min(W * 0.5, H * 0.5);
+    scale = box / 78;
+    const cx = W / 2, cy = H * 0.43;
+    targets = MODEL.map((p) => ({
+      x: cx + (p.nx - 39) * scale,
+      y: cy + (p.ny - 35) * scale,
+      color: p.color,
+    }));
+    // line pairs between neighbouring target points (drawn when assembled)
+    pairs = [];
+    const TH = (scale * 5.5) ** 2;
+    for (let i = 0; i < targets.length; i++) {
+      let made = 0;
+      for (let j = i + 1; j < targets.length && made < 3; j++) {
+        const dx = targets[i].x - targets[j].x, dy = targets[i].y - targets[j].y;
+        if (dx * dx + dy * dy < TH) { pairs.push([i, j]); made++; }
+      }
+    }
+    syncParticles();
   }
 
-  function initParticles() {
-    const count = Math.round(Math.min(110, Math.max(40, (W * H) / 16000)));
-    particles = [];
-    for (let i = 0; i < count; i++) {
-      const green = Math.random() > 0.5;
+  function syncParticles() {
+    const n = targets.length;
+    if (particles.length > n) particles.length = n;
+    while (particles.length < n) {
       particles.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        r: Math.random() * 2 + 1,
-        c: green ? GREEN_SOFT : BLUE,
+        dx: Math.random() * W, dy: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+        a: 0, ease: 0.03 + Math.random() * 0.05, r: Math.random() * 1.4 + 1.1,
       });
     }
   }
 
-  function initBars() {
-    const n = Math.max(10, Math.round(W / 70));
-    bars = [];
-    for (let i = 0; i < n; i++) bars.push({ h: 0, base: 0.15 + Math.random() * 0.25 });
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    layout();
   }
 
-  function pointerMove(e) {
+  function move(e) {
     const rect = canvas.getBoundingClientRect();
     const p = e.touches ? e.touches[0] : e;
     pointer.tx = p.clientX - rect.left;
     pointer.ty = p.clientY - rect.top;
     pointer.active = true;
   }
-  function pointerLeave() {
-    pointer.active = false;
-    pointer.tx = -9999;
-    pointer.ty = -9999;
-  }
-  window.addEventListener("mousemove", pointerMove, { passive: true });
-  window.addEventListener("touchmove", pointerMove, { passive: true });
-  window.addEventListener("mouseout", (e) => { if (!e.relatedTarget) pointerLeave(); });
+  function leave() { pointer.active = false; pointer.tx = -9999; pointer.ty = -9999; }
+  window.addEventListener("mousemove", move, { passive: true });
+  window.addEventListener("touchmove", move, { passive: true });
+  window.addEventListener("touchstart", move, { passive: true });
+  window.addEventListener("mouseout", (e) => { if (!e.relatedTarget) leave(); });
   document.addEventListener("visibilitychange", () => { running = !document.hidden; if (running) loop(); });
 
   function draw() {
     t += 0.01;
     ctx.clearRect(0, 0, W, H);
 
-    // smooth pointer
     if (pointer.tx < -1000) { pointer.x = -9999; pointer.y = -9999; }
-    else {
-      pointer.x += (pointer.tx - pointer.x) * 0.12;
-      pointer.y += (pointer.ty - pointer.y) * 0.12;
+    else { pointer.x += (pointer.tx - pointer.x) * 0.14; pointer.y += (pointer.ty - pointer.y) * 0.14; }
+
+    // assemble factor
+    const cx = W / 2, cy = H * 0.43;
+    let aTarget;
+    if (performance.now() < introUntil) {
+      aTarget = 1;
+    } else if (pointer.active) {
+      const d = Math.hypot(pointer.x - cx, pointer.y - cy);
+      const maxR = Math.min(W, H) * 0.62;
+      aTarget = clamp(1 - d / maxR, 0, 1);
+      aTarget = Math.pow(aTarget, 0.75);
+    } else {
+      aTarget = 0.5 + 0.5 * Math.sin(t * 0.5 - 1.2); // gentle breathing
     }
-    // idle drift point when no pointer (gentle life)
-    const idleX = W * (0.5 + 0.32 * Math.sin(t * 0.5));
-    const idleY = H * (0.45 + 0.18 * Math.cos(t * 0.4));
-    const fx = pointer.active ? pointer.x : idleX;
-    const fy = pointer.active ? pointer.y : idleY;
+    globalA += (aTarget - globalA) * 0.06;
 
-    // ---- reactive equalizer bars along the bottom ----
-    const bw = W / bars.length;
-    for (let i = 0; i < bars.length; i++) {
-      const cx = i * bw + bw / 2;
-      const wave = 0.16 * (0.5 + 0.5 * Math.sin(t * 1.6 + i * 0.5));
-      const dist = Math.abs(cx - fx);
-      const boost = Math.max(0, 1 - dist / (W * 0.22));
-      const target = bars[i].base + wave + boost * 0.55;
-      bars[i].h += (target - bars[i].h) * 0.12;
-      const bh = bars[i].h * H * 0.6;
-      const g = ctx.createLinearGradient(0, H, 0, H - bh);
-      const mix = boost;
-      g.addColorStop(0, `rgba(${GREEN}, ${0.10 + mix * 0.18})`);
-      g.addColorStop(1, `rgba(${mix > 0.4 ? BLUE : GREEN_SOFT}, ${0.22 + mix * 0.4})`);
-      ctx.fillStyle = g;
-      const w = bw * 0.5;
-      roundRect(ctx, cx - w / 2, H - bh, w, bh, w / 2);
-      ctx.fill();
-    }
-
-    // ---- growth trend line influenced by pointer ----
-    drawTrend(fx, fy);
-
-    // ---- particles + links ----
-    for (const p of particles) {
-      // drift
-      p.x += p.vx;
-      p.y += p.vy;
-      // wrap
-      if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
-      if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
-      // pointer gravity
-      const dx = fx - p.x, dy = fy - p.y;
-      const d = Math.hypot(dx, dy);
-      if (d < 170 && d > 0.1) {
-        const pull = ((170 - d) / 170) * (pointer.active ? 0.06 : 0.02);
-        p.x += (dx / d) * pull * 6;
-        p.y += (dy / d) * pull * 6;
+    // connecting lines (logo wireframe) — fade in with assembly
+    if (globalA > 0.05) {
+      ctx.lineWidth = 1;
+      for (const [i, j] of pairs) {
+        const a = particles[i], b = particles[j];
+        const ax = a.px, ay = a.py, bx = b.px, by = b.py;
+        if (ax === undefined) continue;
+        const o = globalA * 0.5 * Math.min(a.a, b.a);
+        if (o < 0.02) continue;
+        ctx.strokeStyle = `rgba(${C.blue}, ${o})`;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
       }
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${p.c}, 0.55)`;
-      ctx.fill();
     }
 
-    // links between near particles
+    // particles
     for (let i = 0; i < particles.length; i++) {
-      const a = particles[i];
-      for (let j = i + 1; j < particles.length; j++) {
-        const b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < 14000) {
-          const o = (1 - d2 / 14000) * 0.4;
-          ctx.strokeStyle = `rgba(${BLUE}, ${o})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-      // link to pointer
-      const dxp = a.x - fx, dyp = a.y - fy;
-      const dp2 = dxp * dxp + dyp * dyp;
-      if (dp2 < 30000) {
-        const o = (1 - dp2 / 30000) * 0.6;
-        ctx.strokeStyle = `rgba(${GREEN}, ${o})`;
-        ctx.lineWidth = 1.1;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(fx, fy);
-        ctx.stroke();
-      }
+      const p = particles[i], tgt = targets[i];
+      // free drift
+      p.dx += p.vx; p.dy += p.vy;
+      if (p.dx < 0 || p.dx > W) p.vx *= -1;
+      if (p.dy < 0 || p.dy > H) p.vy *= -1;
+      // per-particle assembly easing
+      p.a += (globalA - p.a) * p.ease;
+      const e = smooth(clamp(p.a, 0, 1));
+      const px = p.dx + (tgt.x - p.dx) * e;
+      const py = p.dy + (tgt.y - p.dy) * e;
+      p.px = px; p.py = py;
+
+      const op = 0.32 + 0.55 * e;
+      const r = p.r * (1 + 0.5 * e);
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${tgt.color}, ${op})`;
+      ctx.fill();
     }
 
-    // glowing cursor node
-    if (fx > -1000) {
-      const rg = ctx.createRadialGradient(fx, fy, 0, fx, fy, 26);
-      rg.addColorStop(0, `rgba(${GREEN_SOFT}, 0.5)`);
-      rg.addColorStop(1, `rgba(${GREEN_SOFT}, 0)`);
+    // cursor glow
+    if (pointer.x > -1000) {
+      const rg = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 90);
+      rg.addColorStop(0, `rgba(${C.bar2}, 0.16)`);
+      rg.addColorStop(1, `rgba(${C.bar2}, 0)`);
       ctx.fillStyle = rg;
-      ctx.beginPath();
-      ctx.arc(fx, fy, 26, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = `rgba(${BLUE}, 0.9)`;
-      ctx.beginPath();
-      ctx.arc(fx, fy, 3.2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 90, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  function drawTrend(fx, fy) {
-    const baseY = H * 0.62;
-    const amp = H * 0.12;
-    const steps = 60;
-    const pts = [];
-    for (let i = 0; i <= steps; i++) {
-      const x = (i / steps) * W;
-      let y = baseY - Math.sin(i * 0.18 + t * 1.1) * amp * 0.4 - (i / steps) * H * 0.18;
-      // bend toward pointer
-      const infl = Math.max(0, 1 - Math.abs(x - fx) / (W * 0.3));
-      y -= infl * (baseY - fy) * 0.45;
-      pts.push([x, y]);
-    }
-    // area fill
-    ctx.beginPath();
-    ctx.moveTo(0, H);
-    pts.forEach((p) => ctx.lineTo(p[0], p[1]));
-    ctx.lineTo(W, H);
-    ctx.closePath();
-    const fg = ctx.createLinearGradient(0, H * 0.2, 0, H);
-    fg.addColorStop(0, `rgba(${BLUE}, 0.10)`);
-    fg.addColorStop(1, `rgba(${BLUE}, 0)`);
-    ctx.fillStyle = fg;
-    ctx.fill();
-    // stroke
-    ctx.beginPath();
-    pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
-    const sg = ctx.createLinearGradient(0, 0, W, 0);
-    sg.addColorStop(0, `rgba(${BLUE}, 0.7)`);
-    sg.addColorStop(1, `rgba(${GREEN}, 0.85)`);
-    ctx.strokeStyle = sg;
-    ctx.lineWidth = 2.4;
-    ctx.lineJoin = "round";
-    ctx.stroke();
-  }
+  function loop() { if (!running) return; draw(); requestAnimationFrame(loop); }
 
-  function roundRect(c, x, y, w, h, r) {
-    if (h < 0) { h = 0; }
-    r = Math.min(r, w / 2, h / 2 || r);
-    c.beginPath();
-    c.moveTo(x + r, y);
-    c.arcTo(x + w, y, x + w, y + h, r);
-    c.arcTo(x + w, y + h, x, y + h, r);
-    c.arcTo(x, y + h, x, y, r);
-    c.arcTo(x, y, x + w, y, r);
-    c.closePath();
-  }
-
-  function loop() {
-    if (!running) return;
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  let resizeTimer;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
-  });
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(resize, 150); });
 
   resize();
-  if (reduce) { draw(); } else { loop(); }
+  if (reduce) { globalA = 1; particles.forEach((p) => (p.a = 1)); draw(); }
+  else loop();
 })();

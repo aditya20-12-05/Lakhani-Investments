@@ -14,21 +14,28 @@
 <body>
   <div id="nav-root"></div>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero" id="top">
-    <canvas id="hero-canvas"></canvas>
+  <!-- ============ INTERACTIVE INTRO ============ -->
+  <section class="intro" id="top">
+    <canvas id="logo-canvas"></canvas>
+    <p class="intro-hint">Move your cursor</p>
+    <a class="scroll-cue" href="#hero-content" aria-label="Scroll to content"><span class="mouse"></span>Scroll</a>
+  </section>
+
+  <!-- ============ HERO MESSAGE ============ -->
+  <section class="hero-content" id="hero-content">
+    <div class="hero-accent" data-parallax="0.06" aria-hidden="true"></div>
     <div class="wrap">
       <div class="hero-inner">
-        <span class="eyebrow">Wealth management · since 1987</span>
-        <h1>Build a <span class="grad">tomorrow</span><br />worth waiting for.</h1>
-        <p class="tagline">It's Tomorrow, That Matters!</p>
-        <p class="sub">A trusted hand at your side through every market cycle and every life stage — creating, preserving and passing on wealth, with no minimum to begin.</p>
-        <div class="hero-cta">
+        <span class="eyebrow reveal">Wealth management · since 1987</span>
+        <h1 class="reveal" data-delay="1">Build a <span class="grad">tomorrow</span><br />worth waiting for.</h1>
+        <p class="tagline reveal" data-delay="2">It's Tomorrow, That Matters!</p>
+        <p class="sub reveal" data-delay="2">A trusted hand at your side through every market cycle and every life stage — creating, preserving and passing on wealth, with no minimum to begin.</p>
+        <div class="hero-cta reveal" data-delay="3">
           <a class="btn" href="contact.html#talk">Start a conversation <span class="arr">→</span></a>
           <a class="btn btn--ghost" href="services.html">Explore services</a>
         </div>
-        <p class="chips-label">Jump to</p>
-        <div class="chips" id="heroChips">
+        <p class="chips-label reveal" data-delay="3">Jump to</p>
+        <div class="chips reveal" data-delay="4" id="heroChips">
           <a class="chip" href="services.html#investments"><span class="dot"></span>Investments</a>
           <a class="chip" href="services.html#insurance"><span class="dot"></span>Insurance</a>
           <a class="chip" href="services.html#taxation"><span class="dot"></span>Taxation</a>
@@ -38,7 +45,6 @@
         </div>
       </div>
     </div>
-    <div class="scroll-cue"><span class="mouse"></span>Scroll</div>
   </section>
 
   <!-- ============ INTRO + STATS ============ -->
