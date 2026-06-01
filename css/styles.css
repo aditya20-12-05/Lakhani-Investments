@@ -198,6 +198,11 @@ body.menu-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
   margin-bottom: 1.4rem;
 }
 .hero .sub, .hero-content .sub { font-size: 1.15rem; max-width: 540px; margin-bottom: 1.9rem; }
+/* centered hero variant */
+.hero-inner.center { margin-inline: auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.hero-inner.center .sub { margin-left: auto; margin-right: auto; }
+.hero-inner.center .hero-cta { justify-content: center; }
+.hero-content .stats-strip { width: 100%; max-width: 720px; margin-top: clamp(2.6rem, 5vw, 3.8rem); }
 
 /* ---------- interactive intro stage ---------- */
 .intro {
@@ -595,6 +600,154 @@ section { position: relative; }
 .cc-foot .k.blue { background: var(--blue); }
 .cc-foot .k.green { background: var(--green-muted); }
 
+/* ---------- compounding calculator ---------- */
+.calc {
+  display: grid; grid-template-columns: 0.92fr 1.08fr;
+  gap: clamp(1.5rem, 3vw, 2.6rem); align-items: center;
+}
+.calc-controls {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(1.4rem, 2.4vw, 2rem); box-shadow: var(--shadow-soft);
+}
+.ctrl { margin-bottom: 1.5rem; }
+.ctrl:last-of-type { margin-bottom: 0; }
+.ctrl-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.7rem; gap: 1rem; }
+.ctrl-top label { font-weight: 600; color: var(--blue-ink); font-size: 0.96rem; }
+.ctrl-top output { font-family: var(--serif); font-weight: 600; color: var(--blue); font-size: 1.18rem; white-space: nowrap; }
+.ctrl-scale { display: flex; justify-content: space-between; margin-top: 0.45rem; font-size: 0.72rem; color: var(--body); opacity: 0.7; }
+
+.ctrl input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--blue) var(--p, 50%), var(--line) var(--p, 50%), var(--line) 100%);
+  outline: none; cursor: pointer;
+}
+.ctrl input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--blue); box-shadow: 0 2px 8px rgba(0, 88, 168, 0.35);
+  transition: transform 0.15s ease;
+}
+.ctrl input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.14); }
+.ctrl input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.2); }
+.ctrl input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border: 3px solid var(--blue); border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 8px rgba(0, 88, 168, 0.35);
+}
+.ctrl input[type="range"]::-moz-range-track { height: 6px; border-radius: 999px; background: transparent; }
+
+.calc-outputs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem;
+  margin-top: 1.8rem; padding-top: 1.6rem; border-top: 1px solid var(--line);
+}
+.co { text-align: center; }
+.co-lbl { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--body); margin-bottom: 0.4rem; }
+.co-val { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(1.1rem, 2.3vw, 1.5rem); color: var(--ink); line-height: 1.1; }
+.co.is-grow .co-val { color: var(--blue); }
+.co.is-gain .co-val { color: var(--green); }
+.calc-note { margin: 1.2rem 0 0; font-size: 0.76rem; color: var(--body); opacity: 0.78; line-height: 1.5; }
+
+/* chart additions for the calculator */
+.gl-contrib { fill: rgba(0, 128, 64, 0.18); opacity: 0; }
+.gl-end { fill: var(--green); stroke: #fff; stroke-width: 1.5; opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; }
+.cc-ymax { font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 10px; fill: var(--body); }
+.chart-card.in .gl-contrib { transition: opacity 0.8s ease 0.5s; opacity: 1; }
+.chart-card.in .gl-end { transition: transform 0.5s var(--ease) 1.5s, opacity 0.4s ease 1.5s; transform: scale(1); opacity: 1; }
+
+@media (max-width: 860px) {
+  .calc { grid-template-columns: 1fr; }
+}
+
+/* ---------- services: deck of cards ---------- */
+.deck {
+  display: flex; justify-content: center; align-items: flex-end;
+  padding: clamp(2rem, 5vw, 3.4rem) 0 1rem; min-height: 440px; perspective: 1500px;
+}
+.deck-card {
+  --accent: var(--blue); --accent-rgb: 0, 88, 168;
+  position: relative; flex: none; width: 240px; height: 366px;
+  margin-inline: -32px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  background: #fff; border: 1px solid var(--line); border-radius: 18px;
+  padding: 2.1rem 1.4rem 1.5rem; color: var(--ink); text-decoration: none;
+  box-shadow: 0 18px 40px -24px rgba(10, 28, 48, 0.5);
+  transform-origin: bottom center;
+  transform: rotate(var(--rot)) translateY(var(--lift));
+  z-index: var(--z); overflow: hidden; isolation: isolate;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.4s var(--ease);
+}
+.deck-card.is-green { --accent: var(--green); --accent-rgb: 0, 128, 64; }
+.deck-card::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 6px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.7), var(--accent));
+}
+.dc-suit {
+  position: absolute; right: -36px; bottom: -28px; z-index: 0;
+  color: var(--accent); opacity: 0.06; pointer-events: none;
+}
+.dc-suit svg { width: 190px; height: 190px; }
+.deck-card > *:not(.dc-suit):not(.dc-rank) { position: relative; z-index: 1; }
+.dc-rank {
+  position: absolute; z-index: 2; font-family: var(--serif); font-weight: 600; font-size: 1rem;
+  color: var(--accent); letter-spacing: 0.02em;
+}
+.dc-rank.tl { top: 14px; left: 16px; }
+.dc-rank.br { bottom: 14px; right: 16px; transform: rotate(180deg); }
+.dc-icon {
+  width: 58px; height: 58px; border-radius: 15px; display: grid; place-items: center;
+  color: #fff; margin: 0.6rem auto 1.3rem;
+  background: linear-gradient(150deg, rgba(var(--accent-rgb), 0.82), var(--accent));
+  box-shadow: 0 10px 22px -10px rgba(var(--accent-rgb), 0.7);
+}
+.deck-card h3 { font-size: 1.3rem; margin: 0 0 0.45rem; }
+.deck-card p { font-size: 0.92rem; color: var(--body); margin: 0 0 1rem; }
+.deck-card ul {
+  list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap;
+  gap: 0.4rem; justify-content: center;
+}
+.deck-card li {
+  font-size: 0.74rem; font-weight: 600; padding: 0.32rem 0.7rem; border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.09); color: var(--accent);
+}
+.dc-draw {
+  margin-top: auto; padding-top: 1rem; font-weight: 600; font-size: 0.86rem;
+  color: var(--accent); opacity: 0; transform: translateY(6px);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.dc-draw .arr { transition: transform 0.3s var(--ease); display: inline-block; }
+/* draw a card: lift it straight out of the fan */
+.deck .deck-card:hover {
+  transform: rotate(0deg) translateY(-30px) scale(1.05);
+  box-shadow: 0 44px 70px -28px rgba(10, 28, 48, 0.55);
+  border-color: rgba(var(--accent-rgb), 0.45); z-index: 20;
+}
+.deck .deck-card:hover .dc-draw { opacity: 1; transform: none; }
+.deck .deck-card:hover .dc-draw .arr { transform: translateX(5px); }
+/* fan the hand out when the deck scrolls into view */
+.deck.in .deck-card { animation: fanIn 0.7s var(--ease) backwards; animation-delay: calc(0.08s * var(--z)); }
+@keyframes fanIn {
+  from { transform: rotate(0deg) translateY(8px) scale(0.95); opacity: 0; }
+  to   { transform: rotate(var(--rot)) translateY(var(--lift)); opacity: 1; }
+}
+.deck-hint { text-align: center; font-size: 0.85rem; color: var(--body); opacity: 0.7; margin: 0.4rem 0 0; }
+
+@media (hover: none) {
+  .deck-hint { opacity: 0.7; }
+}
+@media (max-width: 760px) {
+  .deck {
+    flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; align-items: stretch;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    perspective: none; gap: 1rem; padding: 1rem 1.2rem 1.5rem; min-height: 0;
+    scrollbar-width: none;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+  .deck-card {
+    margin-inline: 0; width: 78vw; max-width: 300px; height: auto; min-height: 380px;
+    transform: none !important; animation: none !important; scroll-snap-align: center;
+  }
+  .deck .deck-card:hover { transform: none !important; }
+  .dc-draw { opacity: 1; transform: none; }
+}
+
 /* ---------- stylised Gujarat map (Contact) ---------- */
 .gj-map { max-width: 540px; margin: 0 auto 3.2rem; }
 .gj-map svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -637,6 +790,8 @@ section { position: relative; }
   .gl-area { opacity: 1 !important; }
   .gl-line { stroke-dashoffset: 0 !important; }
   .gl-dot { transform: scale(1) !important; }
+  .gl-contrib { opacity: 1 !important; }
+  .gl-end { opacity: 1 !important; transform: scale(1) !important; }
   /* hide animated pulse rings, leave the solid markers */
   .gj-pulse { opacity: 0 !important; }
 }
