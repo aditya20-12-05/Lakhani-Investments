@@ -11,20 +11,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
+<body class="contact">
   <div id="nav-root"></div>
 
-  <section class="page-hero" id="talk" data-fx-net>
+  <section class="page-hero hero-center" id="talk" data-fx-net>
     <div class="wrap reveal">
       <span class="eyebrow">Get in touch</span>
       <h1>Let's talk about<br />your tomorrow.</h1>
       <p>Whether you're opening your first SIP or planning across generations, we'd be glad to help. There's no minimum to begin a conversation.</p>
-      <div class="chips">
-        <a class="chip" href="tel:+919426669596"><span class="dot"></span>Call us</a>
-        <a class="chip" href="mailto:ishit@lakhaniinvestment.in"><span class="dot"></span>Email us</a>
-        <a class="chip" href="#offices"><span class="dot"></span>Visit an office</a>
-        <a class="chip" href="#form"><span class="dot"></span>Send a message</a>
-      </div>
     </div>
   </section>
 
@@ -44,10 +38,6 @@
               <span class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
               <div><b>Email</b><a href="mailto:ishit@lakhaniinvestment.in">ishit@lakhaniinvestment.in</a></div>
             </div>
-            <div class="crow">
-              <span class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg></span>
-              <div><b>Online</b><a href="https://www.lakhaniinvestment.in" target="_blank" rel="noopener">www.lakhaniinvestment.in</a></div>
-            </div>
           </div>
         </div>
 
@@ -65,10 +55,26 @@
             <div class="field">
               <label for="topic">I'm interested in</label>
               <select id="topic" name="topic">
-                <option>Investments</option>
-                <option>Insurance</option>
-                <option>Taxation</option>
-                <option>Succession Planning</option>
+                <option value="" disabled selected hidden>Choose a service</option>
+                <optgroup label="Investments">
+                  <option>Mutual Funds</option>
+                  <option>Portfolio Management (PMS)</option>
+                  <option>Alternative Investment Funds</option>
+                  <option>Global Investment · GIFT City</option>
+                </optgroup>
+                <optgroup label="Insurance">
+                  <option>Term Insurance</option>
+                  <option>Mediclaim</option>
+                </optgroup>
+                <optgroup label="Taxation">
+                  <option>Income Tax</option>
+                  <option>GST</option>
+                  <option>FEMA</option>
+                </optgroup>
+                <optgroup label="Succession Planning">
+                  <option>Will</option>
+                  <option>Private Family Trust</option>
+                </optgroup>
                 <option>Something else</option>
               </select>
             </div>
@@ -92,40 +98,19 @@
         <h2>Two offices, one welcome</h2>
       </div>
 
-      <div class="gj-map reveal" data-delay="1">
-        <svg viewBox="0 0 400 380" role="img" aria-label="A stylised map of Gujarat marking our Rajula and Ahmedabad offices">
-          <defs>
-            <linearGradient id="gjFill" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#0058a8" stop-opacity="0.10" />
-              <stop offset="1" stop-color="#008040" stop-opacity="0.10" />
-            </linearGradient>
-          </defs>
-          <!-- Kutch -->
-          <path class="gj-land" d="M 60,120 C 70,92 120,78 165,90 C 185,96 192,108 180,122 C 150,140 100,150 72,140 C 62,135 56,128 60,120 Z" />
-          <!-- Mainland + Saurashtra -->
-          <path class="gj-land" d="M 175,118 C 210,96 250,92 270,96 C 320,104 340,120 345,150 C 350,185 338,205 322,225 C 312,255 298,285 280,312 C 268,332 258,344 250,346 C 244,338 240,322 238,300 C 236,280 236,265 234,250 C 232,268 224,286 208,300 C 180,322 150,332 120,322 C 90,312 66,292 58,262 C 52,238 58,214 78,200 C 100,188 124,192 140,205 C 150,212 152,210 150,200 C 158,188 168,176 172,160 C 175,145 174,130 175,118 Z" />
-          <line class="gj-link" x1="252" y1="170" x2="138" y2="300" pathLength="1" />
-          <!-- Ahmedabad -->
-          <g class="gj-pin" transform="translate(252,170)">
-            <circle class="gj-pulse" r="6" />
-            <circle class="gj-pulse two" r="6" />
-            <circle class="gj-core" r="5" />
-          </g>
-          <text class="gj-label" x="266" y="167">Ahmedabad</text>
-          <text class="gj-sub" x="266" y="180">Sindhu Bhavan Road</text>
-          <!-- Rajula -->
-          <g class="gj-pin is-green" transform="translate(138,300)">
-            <circle class="gj-pulse" r="6" />
-            <circle class="gj-pulse two" r="6" />
-            <circle class="gj-core" r="5" />
-          </g>
-          <text class="gj-label" x="138" y="326" text-anchor="middle">Rajula</text>
-          <text class="gj-sub" x="138" y="339" text-anchor="middle">Head office · since 1987</text>
-        </svg>
+      <div class="maps-real reveal" data-delay="1">
+        <figure class="map-embed">
+          <iframe src="https://maps.google.com/maps?q=Shyam+Complex+Jawahar+Road+Rajula+365560&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map of our Rajula head office"></iframe>
+          <figcaption>Rajula · Head office, since 1987</figcaption>
+        </figure>
+        <figure class="map-embed">
+          <iframe src="https://maps.google.com/maps?q=Arista+Business+Space+Sindhu+Bhavan+Road+Ahmedabad+380054&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map of our Ahmedabad office"></iframe>
+          <figcaption>Ahmedabad · Sindhu Bhavan Road</figcaption>
+        </figure>
       </div>
 
       <div class="contact-grid">
-        <div class="office reveal" data-delay="1">
+        <div class="office reveal" data-tilt data-delay="1">
           <div class="city">
             <span class="ci" style="background:var(--bg-tint);box-shadow:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.7-6-10a6 6 0 1112 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg></span>
             <h3>Rajula</h3>
@@ -133,7 +118,7 @@
           <address>1st Floor, Shyam Complex,<br />Jawahar Road, Rajula – 365560<br />Gujarat, India</address>
           <a class="btn btn--ghost" style="margin-top:1.2rem" href="https://www.google.com/maps/search/?api=1&query=Shyam+Complex+Jawahar+Road+Rajula+365560" target="_blank" rel="noopener">Open in Maps <span class="arr">→</span></a>
         </div>
-        <div class="office reveal" data-delay="2">
+        <div class="office reveal" data-tilt data-delay="2">
           <div class="city">
             <span class="ci" style="background:var(--bg-tint);box-shadow:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.7-6-10a6 6 0 1112 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg></span>
             <h3>Ahmedabad</h3>
@@ -160,9 +145,10 @@
         var name = form.name.value.trim();
         var email = form.email.value.trim();
         if (!name || !email) { note.textContent = "Please add your name and email."; note.style.color = "#c0392b"; return; }
-        var subject = encodeURIComponent("Enquiry: " + form.topic.value + " - " + name);
+        var topic = form.topic.value || "General enquiry";
+        var subject = encodeURIComponent("Enquiry: " + topic + " - " + name);
         var body = encodeURIComponent(
-          "Name: " + name + "\nEmail: " + email + "\nInterested in: " + form.topic.value +
+          "Name: " + name + "\nEmail: " + email + "\nInterested in: " + topic +
           "\n\n" + form.message.value
         );
         window.location.href = "mailto:ishit@lakhaniinvestment.in?subject=" + subject + "&body=" + body;
@@ -171,25 +157,18 @@
       });
     })();
 
-    // Pre-fill the form when arriving from a service "Enquire now" link, e.g.
-    // contact.html?topic=Investments&service=Mutual+Funds — the matching
-    // interest is selected and the specific service seeds the message.
+    // Pre-select the form when arriving from a service "Enquire now" link, e.g.
+    // contact.html?service=Mutual+Funds — the exact sub-service option is chosen
+    // in the grouped dropdown (topic is kept as a fallback).
     (function () {
       var params = new URLSearchParams(location.search);
-      var topic = params.get("topic");
-      var service = params.get("service");
       var sel = document.getElementById("topic");
-      var msg = document.getElementById("message");
-      if (topic && sel) {
-        for (var i = 0; i < sel.options.length; i++) {
-          if (sel.options[i].value.toLowerCase() === topic.toLowerCase()) {
-            sel.selectedIndex = i;
-            break;
-          }
-        }
-      }
-      if (service && msg && !msg.value) {
-        msg.value = "I'd like to enquire about " + service + ".";
+      if (!sel) return;
+      function norm(s) { return (s || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
+      var want = norm(params.get("service")) || norm(params.get("topic"));
+      if (!want) return;
+      for (var i = 0; i < sel.options.length; i++) {
+        if (norm(sel.options[i].value) === want) { sel.selectedIndex = i; break; }
       }
     })();
   </script>
