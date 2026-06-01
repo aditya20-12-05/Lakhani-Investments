@@ -500,6 +500,26 @@ section { position: relative; }
 .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 200;
   background: linear-gradient(90deg, var(--blue), var(--green)); transition: width 0.1s linear; }
 
+/* ---------- interactive FX ---------- */
+/* cursor spotlight on cards */
+.fx-spot { isolation: isolate; }
+.fx-spot > *:not(.fx-glow) { position: relative; z-index: 1; }
+.fx-glow {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0;
+  opacity: 0; transition: opacity 0.45s var(--ease);
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--fx-glow, rgba(0, 88, 168, 0.13)), transparent 62%);
+}
+.fx-spot:hover .fx-glow { opacity: 1; }
+.svc.is-green { --fx-glow: rgba(0, 128, 64, 0.13); }
+.feature-card, .leader-card { --fx-glow: rgba(127, 195, 160, 0.16); }
+.crow { --fx-glow: rgba(0, 88, 168, 0.10); }
+
+/* particle-network canvas backgrounds */
+[data-fx-net] { position: relative; }
+[data-fx-net] > .wrap { position: relative; z-index: 1; }
+.fx-net-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
   .reveal, .reveal-x { opacity: 1 !important; transform: none !important; }
