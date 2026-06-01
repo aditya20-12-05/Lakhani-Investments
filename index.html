@@ -50,12 +50,65 @@
   <!-- ============ INTRO + STATS ============ -->
   <section class="section tint">
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Who we are</span>
-        <h2>Access to good investing shouldn't depend on how much you already have.</h2>
-        <p class="lead">Lakhani Investment is a financial services firm rooted in Rajula, Gujarat. For close to four decades we have guided individuals and families — building portfolios, protecting what's earned, and preparing wealth for the generations that follow.</p>
+      <div class="split who-split">
+        <div class="section-head reveal" style="margin-bottom:0">
+          <span class="eyebrow">Who we are</span>
+          <h2>Access to good investing shouldn't depend on how much you already have.</h2>
+          <p class="lead">Lakhani Investment is a financial services firm rooted in Rajula, Gujarat. For close to four decades we have guided individuals and families — building portfolios, protecting what's earned, and preparing wealth for the generations that follow.</p>
+        </div>
+        <div class="chart-card reveal" data-delay="1">
+          <div class="cc-top">
+            <div>
+              <span class="cc-title">The patience premium</span>
+              <span class="cc-sub">Illustrative — disciplined, long-term investing</span>
+            </div>
+            <span class="cc-badge">▲ Compounding</span>
+          </div>
+          <svg class="growth-chart" viewBox="0 0 360 200" role="img" aria-label="An illustrative chart of portfolio value rising over time">
+            <defs>
+              <linearGradient id="ccArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0058a8" stop-opacity="0.20" />
+                <stop offset="1" stop-color="#0058a8" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="ccLine" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#0058a8" />
+                <stop offset="1" stop-color="#008040" />
+              </linearGradient>
+            </defs>
+            <g class="cc-grid">
+              <line x1="24" y1="170" x2="336" y2="170" />
+              <line x1="24" y1="130" x2="336" y2="130" />
+              <line x1="24" y1="90" x2="336" y2="90" />
+              <line x1="24" y1="50" x2="336" y2="50" />
+            </g>
+            <g class="cc-bars">
+              <rect class="gl-bar" style="--i:0" x="36"  y="144" width="24" height="26" rx="3" />
+              <rect class="gl-bar" style="--i:1" x="80"  y="134" width="24" height="36" rx="3" />
+              <rect class="gl-bar" style="--i:2" x="124" y="140" width="24" height="30" rx="3" />
+              <rect class="gl-bar" style="--i:3" x="168" y="122" width="24" height="48" rx="3" />
+              <rect class="gl-bar" style="--i:4" x="212" y="112" width="24" height="58" rx="3" />
+              <rect class="gl-bar" style="--i:5" x="256" y="100" width="24" height="70" rx="3" />
+              <rect class="gl-bar" style="--i:6" x="300" y="78"  width="24" height="92" rx="3" />
+            </g>
+            <path class="gl-area" d="M48,150 L92,142 L136,134 L180,118 L224,104 L268,86 L312,60 L312,170 L48,170 Z" fill="url(#ccArea)" />
+            <path class="gl-line" d="M48,150 L92,142 L136,134 L180,118 L224,104 L268,86 L312,60" fill="none" stroke="url(#ccLine)" stroke-width="3" pathLength="1" />
+            <g class="cc-dots">
+              <circle class="gl-dot" style="--i:0" cx="48"  cy="150" r="3.4" />
+              <circle class="gl-dot" style="--i:1" cx="92"  cy="142" r="3.4" />
+              <circle class="gl-dot" style="--i:2" cx="136" cy="134" r="3.4" />
+              <circle class="gl-dot" style="--i:3" cx="180" cy="118" r="3.4" />
+              <circle class="gl-dot" style="--i:4" cx="224" cy="104" r="3.4" />
+              <circle class="gl-dot" style="--i:5" cx="268" cy="86"  r="3.4" />
+              <circle class="gl-dot" style="--i:6" cx="312" cy="60"  r="3.4" />
+            </g>
+          </svg>
+          <div class="cc-foot">
+            <span><i class="k blue"></i>Portfolio value</span>
+            <span><i class="k green"></i>Contributions</span>
+          </div>
+        </div>
       </div>
-      <div class="stats-strip">
+      <div class="stats-strip" style="margin-top:clamp(2.6rem,5vw,3.6rem)">
         <div class="stat reveal" data-delay="1">
           <div class="num">₹<span data-count="240">0</span><span class="suf">Cr+</span></div>
           <div class="lbl">Wealth managed</div>
