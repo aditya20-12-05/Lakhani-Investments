@@ -595,6 +595,39 @@ section { position: relative; }
 .cc-foot .k.blue { background: var(--blue); }
 .cc-foot .k.green { background: var(--green-muted); }
 
+/* ---------- stylised Gujarat map (Contact) ---------- */
+.gj-map { max-width: 540px; margin: 0 auto 3.2rem; }
+.gj-map svg { display: block; width: 100%; height: auto; overflow: visible; }
+.gj-land {
+  fill: url(#gjFill); stroke: rgba(0, 88, 168, 0.4);
+  stroke-width: 1.5; stroke-linejoin: round;
+}
+.gj-link {
+  stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round;
+  stroke-dasharray: 0.014 0.03; opacity: 0.5;
+}
+.gj-core { fill: var(--blue); }
+.gj-pin.is-green .gj-core { fill: var(--green); }
+.gj-pulse {
+  fill: var(--blue); transform-box: fill-box; transform-origin: center;
+  animation: gjPulse 2.8s var(--ease) infinite;
+}
+.gj-pin.is-green .gj-pulse { fill: var(--green); }
+.gj-pulse.two { animation-delay: 1.4s; }
+@keyframes gjPulse {
+  0%   { transform: scale(0.45); opacity: 0.55; }
+  70%  { opacity: 0; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+.gj-label {
+  font-family: "Inter", system-ui, sans-serif; font-weight: 700;
+  font-size: 13px; fill: var(--ink);
+}
+.gj-sub {
+  font-family: "Inter", system-ui, sans-serif; font-weight: 500;
+  font-size: 9.5px; fill: var(--body);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
   .reveal, .reveal-x { opacity: 1 !important; transform: none !important; }
@@ -604,6 +637,8 @@ section { position: relative; }
   .gl-area { opacity: 1 !important; }
   .gl-line { stroke-dashoffset: 0 !important; }
   .gl-dot { transform: scale(1) !important; }
+  /* hide animated pulse rings, leave the solid markers */
+  .gj-pulse { opacity: 0 !important; }
 }
 
 /* ---------- responsive ---------- */
