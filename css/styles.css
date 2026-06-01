@@ -854,9 +854,9 @@ section { position: relative; }
    supporting "quote". (Locally reverses the global section-head flip.)
    ============================================================ */
 
-/* hero: fills the first screen so only it shows on load, the firm name
-   leads and the tagline is a small centred quote */
-.about-hero {
+/* Tall, centred hero (About + each service page): fills the first screen so
+   only it shows on load, leading with a large heading over a small quote. */
+.hero-center {
   text-align: center;
   min-height: 100svh;
   display: flex;
@@ -864,12 +864,14 @@ section { position: relative; }
   justify-content: center;
   padding: 96px 0 48px;
 }
-.about-hero .wrap { max-width: 880px; }
-.about-hero h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
-.about-hero .hero-lead {
-  font-size: clamp(1.02rem, 1.5vw, 1.18rem); color: var(--body);
-  max-width: 620px; margin: 0 auto;
+.hero-center .wrap { max-width: 880px; }
+.hero-center p {
+  font-size: clamp(1.05rem, 1.6vw, 1.18rem); color: var(--body);
+  max-width: 620px; margin-left: auto; margin-right: auto;
 }
+.hero-center .chips { justify-content: center; }
+.about-hero h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
+.about-hero .hero-lead { font-size: clamp(1.02rem, 1.5vw, 1.18rem); }
 
 /* Every About section leads with its short label as the dominant heading;
    the descriptive sentence beneath it is a smaller, supporting subhead.
