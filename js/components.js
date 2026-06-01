@@ -28,9 +28,20 @@
     ["Contact", "contact.html"],
   ];
 
+  const servicePages = [
+    "services.html",
+    "investments.html",
+    "insurance.html",
+    "taxation.html",
+    "succession.html",
+  ];
+
   const navLinks = links
     .map(([label, href]) => {
-      const active = href === path ? " active" : "";
+      const isActive =
+        href === path ||
+        (href === "services.html" && servicePages.includes(path));
+      const active = isActive ? " active" : "";
       return `<a class="${active.trim()}" href="${href}">${label}</a>`;
     })
     .join("");
@@ -56,10 +67,10 @@
         </div>
         <div>
           <h5>Services</h5>
-          <a href="services.html#investments">Investments</a>
-          <a href="services.html#insurance">Insurance</a>
-          <a href="services.html#taxation">Taxation</a>
-          <a href="services.html#succession">Succession Planning</a>
+          <a href="investments.html">Investments</a>
+          <a href="insurance.html">Insurance</a>
+          <a href="taxation.html">Taxation</a>
+          <a href="succession.html">Succession Planning</a>
         </div>
         <div>
           <h5>Company</h5>
