@@ -118,4 +118,44 @@
   }
 
   document.querySelectorAll("[data-fx-net]").forEach(initNet);
+
+  /* ----------------------------------------------------------------
+     Scroll-filled timeline (About page)
+     A colour line grows from the top as the section scrolls past the
+     viewport's middle; each milestone dot lights up as the front
+     reaches it.
+  ---------------------------------------------------------------- */
+  document.querySelectorAll(".timeline").forEach((tl) => {
+    const fill = document.createElement("span");
+    fill.className = "tl-fill";
+    fill.setAttribute("aria-hidden", "true");
+    tl.insertBefore(fill, tl.firstChild);
+    const items = Array.prototype.slice.call(tl.querySelectorAll(".tl-item"));
+
+    if (reduce) {
+      // show the finished state without animating
+      fill.style.setProperty("--tl-fill", tl.offsetHeight + "px");
+      items.forEach((it) => it.classList.add("lit"));
+      return;
+    }
+
+    let ticking = false;
+    function update() {
+      ticking = false;
+      const r = tl.getBoundingClientRect();
+      const mid = window.innerHeight * 0.55; // fill front tracks ~middle of screen
+      const h = Math.max(0, Math.min(tl.offsetHeight, mid - r.top));
+      fill.style.setProperty("--tl-fill", h + "px");
+      items.forEach((it) => {
+        const dotY = it.offsetTop + 12; // ~centre of the 16px dot
+        it.classList.toggle("lit", dotY <= h);
+      });
+    }
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  });
 })();

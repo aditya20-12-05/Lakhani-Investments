@@ -415,12 +415,24 @@ section { position: relative; }
 
 /* ---------- timeline ---------- */
 .timeline { position: relative; margin-top: 1rem; padding-left: 28px; }
+/* faint static track */
 .timeline::before { content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px;
-  background: linear-gradient(var(--blue), var(--green)); }
+  background: var(--line); border-radius: 2px; }
+/* scroll-driven colour fill, height set from JS via --tl-fill (px) */
+.tl-fill { position: absolute; left: 7px; top: 6px; width: 2px; border-radius: 2px;
+  height: var(--tl-fill, 0px);
+  background: linear-gradient(var(--blue), var(--green));
+  transition: height 0.25s linear; }
 .tl-item { position: relative; padding: 0 0 1.8rem; }
 .tl-item::before { content: ""; position: absolute; left: -28px; top: 4px; width: 16px; height: 16px;
-  border-radius: 50%; background: #fff; border: 3px solid var(--blue); }
-.tl-item:last-child::before { border-color: var(--green); }
+  border-radius: 50%; background: #fff; border: 3px solid var(--line);
+  transition: border-color 0.4s var(--ease), background 0.4s var(--ease),
+              box-shadow 0.4s var(--ease), transform 0.4s var(--ease); }
+/* lit as the fill front passes each dot */
+.tl-item.lit::before { border-color: var(--blue); background: var(--blue);
+  box-shadow: 0 0 0 4px rgba(0, 88, 168, 0.14); transform: scale(1.05); }
+.tl-item.lit:last-child::before { border-color: var(--green); background: var(--green);
+  box-shadow: 0 0 0 4px rgba(0, 128, 64, 0.16); }
 .tl-item .yr { font-family: var(--serif); font-weight: 600; color: var(--green); font-size: 1.2rem; }
 .tl-item h4 { margin: 0.2rem 0 0.2rem; font-size: 1.12rem; }
 .tl-item p { font-size: 0.95rem; margin: 0; }
