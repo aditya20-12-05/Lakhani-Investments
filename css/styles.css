@@ -871,32 +871,29 @@ section { position: relative; }
   max-width: 620px; margin: 0 auto;
 }
 
-/* eyebrow returns to a quiet uppercase label on every about section */
-.about .eyebrow,
-.about .section-head .eyebrow {
-  display: inline-flex; align-items: center; gap: 0.55rem;
-  font-family: var(--sans); font-weight: 600; font-size: 0.78rem;
-  line-height: 1.4; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--blue); margin-bottom: 1rem;
-}
-.about .eyebrow::before,
-.about .section-head .eyebrow::before {
-  content: ""; display: inline-block; width: 26px; height: 2px;
-  background: var(--green);
-}
-.about .ink-bg .eyebrow { color: #7fc3a0; }
-
-/* the section title is the dominant element, clearly larger than the quote */
-.about h2,
-.about .section-head h2 {
+/* Every About section leads with its short label as the dominant heading;
+   the descriptive sentence beneath it is a smaller, supporting subhead.
+   The .section-head blocks already do this site-wide, so here we extend the
+   same treatment to the story, timeline and leadership sections. */
+.about .narrow .eyebrow,
+.about .split-body .eyebrow {
+  display: block;
   font-family: var(--serif); font-weight: 600;
-  font-size: clamp(1.95rem, 4.2vw, 3rem); line-height: 1.1;
-  letter-spacing: -0.01em; text-transform: none; color: var(--ink);
+  font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.08;
+  letter-spacing: -0.01em; text-transform: none;
+  color: var(--ink); margin-bottom: 0.5rem;
 }
-.about .ink-bg h2 { color: #fff; }
-.about .section-head.center h2 { max-width: 24ch; }
+.about .narrow .eyebrow::before,
+.about .split-body .eyebrow::before { display: none; }
 
-/* the supporting quote sits a clear notch below the heading */
+.about .narrow h2,
+.about .split-body h2 {
+  font-family: var(--sans); font-weight: 500;
+  font-size: clamp(1.05rem, 2.1vw, 1.35rem); line-height: 1.5;
+  letter-spacing: 0; color: var(--body);
+}
+
+/* keep the lead paragraphs modest beneath the heading */
 .about .lead { font-size: 1.1rem; }
 
 /* tactile pointer-tilt cards (motion driven by js/fx.js) */
