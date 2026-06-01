@@ -24,12 +24,11 @@
   const links = [
     ["Home", "index.html"],
     ["About", "about.html"],
-    ["Services", "services.html"],
+    ["Services", "index.html#services"],
     ["Contact", "contact.html"],
   ];
 
   const servicePages = [
-    "services.html",
     "investments.html",
     "insurance.html",
     "taxation.html",
@@ -38,9 +37,11 @@
 
   const navLinks = links
     .map(([label, href]) => {
+      const target = href.split("#")[0];
       const isActive =
-        href === path ||
-        (href === "services.html" && servicePages.includes(path));
+        href === "index.html#services"
+          ? servicePages.includes(path)
+          : target === path;
       const active = isActive ? " active" : "";
       return `<a class="${active.trim()}" href="${href}">${label}</a>`;
     })

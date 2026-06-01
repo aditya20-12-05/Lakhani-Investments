@@ -286,6 +286,7 @@ body.menu-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
 /* ---------- sections ---------- */
 section { position: relative; }
 .section { padding: clamp(72px, 11vw, 140px) 0; }
+#services { scroll-margin-top: 88px; }
 .section-head { max-width: 760px; margin-bottom: 3rem; }
 .section-head.center { margin-inline: auto; text-align: center; }
 /* The short section label leads as the dominant heading; the descriptive
