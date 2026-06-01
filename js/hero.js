@@ -68,14 +68,17 @@
       y: cy + (p.ny - 35) * scale,
       color: p.color,
     }));
-    // line pairs between neighbouring target points (drawn when assembled)
+    // line pairs between neighbouring target points (drawn when assembled).
+    // Only join points of the same colour so the four bars and the arrow read
+    // as distinct shapes instead of merging into one mesh.
     pairs = [];
-    const TH = (scale * 5.5) ** 2;
+    const TH = (scale * 5.2) ** 2;
     for (let i = 0; i < targets.length; i++) {
       let made = 0;
       for (let j = i + 1; j < targets.length && made < 3; j++) {
+        if (targets[i].color !== targets[j].color) continue;
         const dx = targets[i].x - targets[j].x, dy = targets[i].y - targets[j].y;
-        if (dx * dx + dy * dy < TH) { pairs.push([i, j]); made++; }
+        if (dx * dx + dy * dy < TH) { pairs.push([i, j, targets[i].color]); made++; }
       }
     }
     syncParticles();
@@ -113,6 +116,11 @@
   window.addEventListener("mousemove", move, { passive: true });
   window.addEventListener("touchmove", move, { passive: true });
   window.addEventListener("touchstart", move, { passive: true });
+  // On touch devices there is no hover, so release the pointer when the finger
+  // lifts — otherwise the mark stays frozen at the last touch point and the
+  // gentle idle breathing never resumes.
+  window.addEventListener("touchend", leave, { passive: true });
+  window.addEventListener("touchcancel", leave, { passive: true });
   window.addEventListener("mouseout", (e) => { if (!e.relatedTarget) leave(); });
   document.addEventListener("visibilitychange", () => { running = !document.hidden; if (running) loop(); });
 
@@ -134,20 +142,28 @@
       aTarget = clamp(1 - d / maxR, 0, 1);
       aTarget = Math.pow(aTarget, 0.75);
     } else {
-      aTarget = 0.5 + 0.5 * Math.sin(t * 0.5 - 1.2); // gentle breathing
+      // Idle: mostly drifting dust with a faint, periodic bloom that hints at
+      // the mark without fully forming it — keeps the cursor reveal special.
+      const s = 0.5 + 0.5 * Math.sin(t * 0.9 - 1.2);
+      aTarget = 0.08 + 0.34 * (s * s);
     }
     globalA += (aTarget - globalA) * 0.06;
 
     // connecting lines (logo wireframe) — fade in with assembly
     if (globalA > 0.05) {
       ctx.lineWidth = 1;
-      for (const [i, j] of pairs) {
+      for (const [i, j, col] of pairs) {
         const a = particles[i], b = particles[j];
         const ax = a.px, ay = a.py, bx = b.px, by = b.py;
         if (ax === undefined) continue;
-        const o = globalA * 0.5 * Math.min(a.a, b.a);
+        // Only wire points once they are genuinely near their targets, so the
+        // mesh appears as the clean logo forms — never as a tangle of long
+        // lines while the particles are still scattered in transit.
+        const m = Math.min(a.a, b.a);
+        if (m < 0.6) continue;
+        const o = globalA * 0.5 * ((m - 0.6) / 0.4);
         if (o < 0.02) continue;
-        ctx.strokeStyle = `rgba(${C.blue}, ${o})`;
+        ctx.strokeStyle = `rgba(${col}, ${o})`;
         ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
       }
     }
@@ -166,8 +182,8 @@
       const py = p.dy + (tgt.y - p.dy) * e;
       p.px = px; p.py = py;
 
-      const op = 0.32 + 0.55 * e;
-      const r = p.r * (1 + 0.5 * e);
+      const op = 0.3 + 0.62 * e;
+      const r = p.r * (1 + 0.55 * e);
       ctx.beginPath();
       ctx.arc(px, py, r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${tgt.color}, ${op})`;
