@@ -28,6 +28,31 @@
   }
 
   /* ----------------------------------------------------------------
+     Pointer-tilt cards
+     Cards marked [data-tilt] lean gently toward the cursor in 3D and
+     keep a small lift, composing with their CSS hover styling for a
+     tactile, alive feel. On leave they settle back via the CSS easing.
+  ---------------------------------------------------------------- */
+  if (fine && !reduce) {
+    const MAX = 7; // degrees of lean at the card's edge
+    document.querySelectorAll("[data-tilt]").forEach((card) => {
+      card.addEventListener("pointermove", (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transition = "transform 0.12s ease-out";
+        card.style.transform =
+          "perspective(900px) rotateX(" + (-py * MAX).toFixed(2) + "deg) " +
+          "rotateY(" + (px * MAX).toFixed(2) + "deg) translateY(-6px)";
+      });
+      card.addEventListener("pointerleave", () => {
+        card.style.transition = ""; // restore CSS easing for the settle
+        card.style.transform = "";
+      });
+    });
+  }
+
+  /* ----------------------------------------------------------------
      Particle-network backgrounds
   ---------------------------------------------------------------- */
   function initNet(host) {

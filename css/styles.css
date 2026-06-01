@@ -845,3 +845,51 @@ section { position: relative; }
   .footer-top { grid-template-columns: 1fr; gap: 1.6rem; }
   body { font-size: 16px; }
 }
+
+/* ============================================================
+   About page - unified typographic hierarchy + tactile cards.
+   Scoped to .about so the rest of the site is untouched. Each
+   section leads with a large serif heading; the eyebrow is a quiet
+   label above it and the descriptive line below is the smaller
+   supporting "quote". (Locally reverses the global section-head flip.)
+   ============================================================ */
+
+/* hero: the firm name leads, the tagline is a small centred quote */
+.about-hero { text-align: center; }
+.about-hero .wrap { max-width: 880px; }
+.about-hero h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
+.about-hero .hero-lead {
+  font-size: clamp(1.02rem, 1.5vw, 1.18rem); color: var(--body);
+  max-width: 620px; margin: 0 auto;
+}
+
+/* eyebrow returns to a quiet uppercase label on every about section */
+.about .eyebrow,
+.about .section-head .eyebrow {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  font-family: var(--sans); font-weight: 600; font-size: 0.78rem;
+  line-height: 1.4; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 1rem;
+}
+.about .eyebrow::before,
+.about .section-head .eyebrow::before {
+  content: ""; display: inline-block; width: 26px; height: 2px;
+  background: var(--green);
+}
+.about .ink-bg .eyebrow { color: #7fc3a0; }
+
+/* the section title is the dominant element, clearly larger than the quote */
+.about h2,
+.about .section-head h2 {
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(1.95rem, 4.2vw, 3rem); line-height: 1.1;
+  letter-spacing: -0.01em; text-transform: none; color: var(--ink);
+}
+.about .ink-bg h2 { color: #fff; }
+.about .section-head.center h2 { max-width: 24ch; }
+
+/* the supporting quote sits a clear notch below the heading */
+.about .lead { font-size: 1.1rem; }
+
+/* tactile pointer-tilt cards (motion driven by js/fx.js) */
+[data-tilt] { transform-style: preserve-3d; will-change: transform; }
