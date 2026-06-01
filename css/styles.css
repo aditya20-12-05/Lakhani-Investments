@@ -854,8 +854,16 @@ section { position: relative; }
    supporting "quote". (Locally reverses the global section-head flip.)
    ============================================================ */
 
-/* hero: the firm name leads, the tagline is a small centred quote */
-.about-hero { text-align: center; }
+/* hero: fills the first screen so only it shows on load, the firm name
+   leads and the tagline is a small centred quote */
+.about-hero {
+  text-align: center;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 0 48px;
+}
 .about-hero .wrap { max-width: 880px; }
 .about-hero h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
 .about-hero .hero-lead {
