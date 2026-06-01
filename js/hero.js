@@ -16,7 +16,7 @@
     blue: "0,88,168",    // #0058a8
   };
 
-  let W = 0, H = 0, DPR = 1;
+  let W = 0, H = 0, DPR = 1, rect = null;
   let particles = [];
   let targets = [];
   let pairs = [];
@@ -91,14 +91,14 @@
       particles.push({
         dx: Math.random() * W, dy: Math.random() * H,
         vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
-        a: 0, ease: 0.03 + Math.random() * 0.05, r: Math.random() * 1.4 + 1.1,
+        a: 0, ease: 0.06 + Math.random() * 0.07, r: Math.random() * 1.4 + 1.1,
       });
     }
   }
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.getBoundingClientRect();
+    rect = canvas.getBoundingClientRect();
     W = rect.width; H = rect.height;
     canvas.width = W * DPR; canvas.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -106,7 +106,7 @@
   }
 
   function move(e) {
-    const rect = canvas.getBoundingClientRect();
+    if (!rect) return;
     const p = e.touches ? e.touches[0] : e;
     pointer.tx = p.clientX - rect.left;
     pointer.ty = p.clientY - rect.top;
@@ -129,7 +129,7 @@
     ctx.clearRect(0, 0, W, H);
 
     if (pointer.tx < -1000) { pointer.x = -9999; pointer.y = -9999; }
-    else { pointer.x += (pointer.tx - pointer.x) * 0.14; pointer.y += (pointer.ty - pointer.y) * 0.14; }
+    else { pointer.x += (pointer.tx - pointer.x) * 0.32; pointer.y += (pointer.ty - pointer.y) * 0.32; }
 
     // assemble factor
     const cx = W / 2, cy = H * 0.43;
@@ -147,7 +147,7 @@
       const s = 0.5 + 0.5 * Math.sin(t * 0.9 - 1.2);
       aTarget = 0.08 + 0.34 * (s * s);
     }
-    globalA += (aTarget - globalA) * 0.06;
+    globalA += (aTarget - globalA) * 0.13;
 
     // connecting lines (logo wireframe): fade in with assembly
     if (globalA > 0.05) {
@@ -204,6 +204,9 @@
 
   let rt;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(resize, 150); });
+  // Keep the cached canvas rect correct as the hero scrolls, so the pointer
+  // mapping stays accurate without forcing a reflow on every mousemove.
+  window.addEventListener("scroll", () => { rect = canvas.getBoundingClientRect(); }, { passive: true });
 
   resize();
   if (reduce) { globalA = 1; particles.forEach((p) => (p.a = 1)); draw(); }
