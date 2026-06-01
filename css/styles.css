@@ -900,3 +900,40 @@ section { position: relative; }
 
 /* tactile pointer-tilt cards (motion driven by js/fx.js) */
 [data-tilt] { transform-style: preserve-3d; will-change: transform; }
+
+/* ============================================================
+   Floating "back" pill + per-service enquiry links
+   ============================================================ */
+
+/* Hovering back pill: service pages return to all services, the About
+   page returns home. Fixed top-left, clear of the header logo. */
+.back-fab {
+  position: fixed; top: 88px; left: 22px; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  font-family: var(--sans); font-weight: 600; font-size: 0.86rem;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: saturate(150%) blur(12px);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), background 0.3s;
+}
+.back-fab:hover { transform: translateY(-2px); background: #fff; box-shadow: var(--shadow); }
+.back-fab .bf-arr { font-size: 1rem; line-height: 1; transition: transform 0.3s var(--ease); }
+.back-fab:hover .bf-arr { transform: translateX(-3px); }
+@media (max-width: 760px) {
+  .back-fab { top: 80px; left: 14px; padding: 0.46rem 0.85rem; font-size: 0.8rem; }
+}
+
+/* Per-service enquiry link inside each offering card. Picks up the card's
+   accent: blue on standard cards, green on .is-green cards. */
+.svc-cta {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--sans); font-weight: 600; font-size: 0.92rem;
+  color: var(--blue);
+}
+.svc.is-green .svc-cta { color: var(--green); }
+.svc-cta .arr { transition: transform 0.3s var(--ease); }
+.svc-cta:hover .arr { transform: translateX(4px); }

@@ -170,6 +170,28 @@
         note.style.color = "var(--green)";
       });
     })();
+
+    // Pre-fill the form when arriving from a service "Enquire now" link, e.g.
+    // contact.html?topic=Investments&service=Mutual+Funds — the matching
+    // interest is selected and the specific service seeds the message.
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var topic = params.get("topic");
+      var service = params.get("service");
+      var sel = document.getElementById("topic");
+      var msg = document.getElementById("message");
+      if (topic && sel) {
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value.toLowerCase() === topic.toLowerCase()) {
+            sel.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      if (service && msg && !msg.value) {
+        msg.value = "I'd like to enquire about " + service + ".";
+      }
+    })();
   </script>
 </body>
 </html>

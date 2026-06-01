@@ -53,11 +53,18 @@
         ${brand("index.html")}
         <div class="nav-links" id="navLinks">
           ${navLinks}
-          <a class="btn nav-cta" href="contact.html#talk">Talk to us</a>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>
       </nav>
     </header>`;
+
+  // Floating "back" pill: from a service page it returns to all services,
+  // from the About page it returns to the homepage. Omitted elsewhere.
+  const backFab = servicePages.includes(path)
+    ? `<a class="back-fab" href="index.html#services" aria-label="Back to all services"><span class="bf-arr" aria-hidden="true">&larr;</span> All services</a>`
+    : path === "about.html"
+    ? `<a class="back-fab" href="index.html" aria-label="Back to home"><span class="bf-arr" aria-hidden="true">&larr;</span> Home</a>`
+    : "";
 
   const footer = `
     <footer class="site-footer">
@@ -93,7 +100,7 @@
       </div>
     </footer>`;
 
-  document.getElementById("nav-root").innerHTML = `<div class="progress" id="progress"></div>` + header;
+  document.getElementById("nav-root").innerHTML = `<div class="progress" id="progress"></div>` + header + backFab;
   document.getElementById("footer-root").innerHTML = footer;
 
   // mobile menu
