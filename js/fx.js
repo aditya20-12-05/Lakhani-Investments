@@ -1,6 +1,6 @@
 /* Decorative + interactive flourishes, applied site-wide:
    1. A drifting particle-network canvas behind any [data-fx-net] container
-      (subpage headers, dark CTA bands) — echoes the home-page constellation.
+      (subpage headers, dark CTA bands) that echo the home-page constellation.
    2. A soft cursor-following spotlight on cards, for a tactile, alive feel.
    Everything degrades gracefully on touch devices and reduced-motion. */
 (function () {

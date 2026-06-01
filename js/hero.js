@@ -1,4 +1,4 @@
-/* Interactive intro — cursor-built logo constellation.
+/* Interactive intro: cursor-built logo constellation.
    Particles drift as dust; as the cursor nears the centre they assemble into
    the Lakhani mark (ascending bars + rising arrow), then dissolve when it
    leaves. Auto-assembles once on load, and breathes gently without a pointer. */
@@ -117,7 +117,7 @@
   window.addEventListener("touchmove", move, { passive: true });
   window.addEventListener("touchstart", move, { passive: true });
   // On touch devices there is no hover, so release the pointer when the finger
-  // lifts — otherwise the mark stays frozen at the last touch point and the
+  // lifts, otherwise the mark stays frozen at the last touch point and the
   // gentle idle breathing never resumes.
   window.addEventListener("touchend", leave, { passive: true });
   window.addEventListener("touchcancel", leave, { passive: true });
@@ -143,13 +143,13 @@
       aTarget = Math.pow(aTarget, 0.75);
     } else {
       // Idle: mostly drifting dust with a faint, periodic bloom that hints at
-      // the mark without fully forming it — keeps the cursor reveal special.
+      // the mark without fully forming it, keeps the cursor reveal special.
       const s = 0.5 + 0.5 * Math.sin(t * 0.9 - 1.2);
       aTarget = 0.08 + 0.34 * (s * s);
     }
     globalA += (aTarget - globalA) * 0.06;
 
-    // connecting lines (logo wireframe) — fade in with assembly
+    // connecting lines (logo wireframe): fade in with assembly
     if (globalA > 0.05) {
       ctx.lineWidth = 1;
       for (const [i, j, col] of pairs) {
@@ -157,7 +157,7 @@
         const ax = a.px, ay = a.py, bx = b.px, by = b.py;
         if (ax === undefined) continue;
         // Only wire points once they are genuinely near their targets, so the
-        // mesh appears as the clean logo forms — never as a tangle of long
+        // mesh appears as the clean logo forms, never as a tangle of long
         // lines while the particles are still scattered in transit.
         const m = Math.min(a.a, b.a);
         if (m < 0.6) continue;

@@ -22,8 +22,8 @@
   const endDot = document.getElementById("cEnd");
   const yMaxLbl = document.getElementById("cYMax");
 
-  // chart plot geometry (viewBox 360 x 200)
-  const PADL = 44, PADR = 344, TOP = 30, BASE = 172;
+  // chart plot geometry (viewBox 760 x 170)
+  const PADL = 44, PADR = 720, TOP = 24, BASE = 146;
 
   function fmtINR(n) {
     if (n >= 1e7) return "₹" + (n / 1e7).toFixed(2) + " Cr";

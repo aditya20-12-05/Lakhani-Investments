@@ -1,5 +1,5 @@
 /* ============================================================
-   Lakhani Investment — brand stylesheet
+   Lakhani Investment - brand stylesheet
    Blue #0058A8 (primary) · Green #008040 (secondary)
    Fraunces (headlines) · Inter (body)
    ============================================================ */
@@ -286,9 +286,32 @@ body.menu-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
 /* ---------- sections ---------- */
 section { position: relative; }
 .section { padding: clamp(72px, 11vw, 140px) 0; }
-.section-head { max-width: 720px; margin-bottom: 3rem; }
+.section-head { max-width: 760px; margin-bottom: 3rem; }
 .section-head.center { margin-inline: auto; text-align: center; }
-.section-head h2 { font-size: clamp(2rem, 4.6vw, 3.3rem); }
+/* The short section label leads as the dominant heading; the descriptive
+   line beneath it is demoted to a supporting subhead. */
+.section-head .eyebrow {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2rem, 4.6vw, 3.3rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.section-head .eyebrow::before { display: none; }
+.section-head h2 {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: clamp(1.05rem, 2.1vw, 1.35rem);
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--body);
+}
+.section-head.center h2 { max-width: 34ch; margin-inline: auto; }
+.ink-bg .section-head h2 { color: rgba(255, 255, 255, 0.82); }
 .tint { background: var(--bg-tint); }
 .tint-green { background: var(--bg-tint-green); }
 .ink-bg {
@@ -602,8 +625,8 @@ section { position: relative; }
 
 /* ---------- compounding calculator ---------- */
 .calc {
-  display: grid; grid-template-columns: 0.92fr 1.08fr;
-  gap: clamp(1.5rem, 3vw, 2.6rem); align-items: center;
+  display: grid; grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 2.2rem);
 }
 .calc-controls {
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact — Lakhani Investment</title>
+  <title>Contact · Lakhani Investment</title>
   <meta name="description" content="Reach Lakhani Investment in Rajula or Ahmedabad. Call +91 94266 69596 or write to ishit@lakhaniinvestment.in." />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -160,7 +160,7 @@
         var name = form.name.value.trim();
         var email = form.email.value.trim();
         if (!name || !email) { note.textContent = "Please add your name and email."; note.style.color = "#c0392b"; return; }
-        var subject = encodeURIComponent("Enquiry: " + form.topic.value + " — " + name);
+        var subject = encodeURIComponent("Enquiry: " + form.topic.value + " - " + name);
         var body = encodeURIComponent(
           "Name: " + name + "\nEmail: " + email + "\nInterested in: " + form.topic.value +
           "\n\n" + form.message.value

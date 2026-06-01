@@ -52,7 +52,7 @@
       <div class="wrap footer-top">
         <div class="footer-brand">
           ${brand("index.html")}
-          <p>A wealth management firm rooted in Rajula since 1987 — guiding families through creation, preservation and transfer of wealth, with no minimum to begin.</p>
+          <p>A wealth management firm rooted in Rajula since 1987, guiding families through creation, preservation and transfer of wealth, with no minimum to begin.</p>
         </div>
         <div>
           <h5>Services</h5>
