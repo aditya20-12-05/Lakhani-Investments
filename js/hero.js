@@ -26,6 +26,11 @@
   let globalA = 0;
   let introUntil = performance.now() + 2600; // hold the logo briefly on load
   let running = true;
+  // Performance guards: pause when the hero is off-screen, and automatically
+  // shed the heaviest work (the connecting-line pass) on devices that can't
+  // sustain a smooth frame rate, so the interaction never feels laggy.
+  let rafId = 0, onScreen = true, lite = false;
+  let lastTs = 0, frameEMA = 16, frameN = 0;
 
   const smooth = (x) => x * x * (3 - 2 * x);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -97,7 +102,7 @@
   }
 
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     rect = canvas.getBoundingClientRect();
     W = rect.width; H = rect.height;
     canvas.width = W * DPR; canvas.height = H * DPR;
@@ -122,7 +127,7 @@
   window.addEventListener("touchend", leave, { passive: true });
   window.addEventListener("touchcancel", leave, { passive: true });
   window.addEventListener("mouseout", (e) => { if (!e.relatedTarget) leave(); });
-  document.addEventListener("visibilitychange", () => { running = !document.hidden; if (running) loop(); });
+  document.addEventListener("visibilitychange", () => { running = !document.hidden; if (running) start(); });
 
   function draw() {
     t += 0.01;
@@ -149,8 +154,9 @@
     }
     globalA += (aTarget - globalA) * 0.13;
 
-    // connecting lines (logo wireframe): fade in with assembly
-    if (globalA > 0.05) {
+    // connecting lines (logo wireframe): fade in with assembly.
+    // Skipped entirely in lite mode — this is the most expensive pass.
+    if (!lite && globalA > 0.05) {
       ctx.lineWidth = 1;
       for (const [i, j, col] of pairs) {
         const a = particles[i], b = particles[j];
@@ -192,15 +198,29 @@
 
     // cursor glow
     if (pointer.x > -1000) {
-      const rg = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 90);
+      const gr = lite ? 60 : 90;
+      const rg = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, gr);
       rg.addColorStop(0, `rgba(${C.bar2}, 0.16)`);
       rg.addColorStop(1, `rgba(${C.bar2}, 0)`);
       ctx.fillStyle = rg;
-      ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 90, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(pointer.x, pointer.y, gr, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  function loop() { if (!running) return; draw(); requestAnimationFrame(loop); }
+  function loop(ts) {
+    if (!running || !onScreen) { rafId = 0; return; }
+    if (lastTs) {
+      frameEMA += (ts - lastTs - frameEMA) * 0.1;
+      // After a brief warm-up, if we're stuck below ~36fps, drop to lite mode.
+      if (!lite && ++frameN > 40 && frameEMA > 28) lite = true;
+    }
+    lastTs = ts;
+    draw();
+    rafId = requestAnimationFrame(loop);
+  }
+  function start() {
+    if (!rafId && running && onScreen && !reduce) { lastTs = 0; rafId = requestAnimationFrame(loop); }
+  }
 
   let rt;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(resize, 150); });
@@ -208,7 +228,15 @@
   // mapping stays accurate without forcing a reflow on every mousemove.
   window.addEventListener("scroll", () => { rect = canvas.getBoundingClientRect(); }, { passive: true });
 
+  // Stop animating when the hero is scrolled out of view; resume on return.
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((ents) => {
+      onScreen = ents[0].isIntersecting;
+      if (onScreen) start(); // the loop self-stops once onScreen is false
+    }, { threshold: 0 }).observe(canvas);
+  }
+
   resize();
   if (reduce) { globalA = 1; particles.forEach((p) => (p.a = 1)); draw(); }
-  else loop();
+  else start();
 })();
