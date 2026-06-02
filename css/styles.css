@@ -873,6 +873,23 @@ section { position: relative; }
 .hero-center h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
 .about-hero .hero-lead { font-size: clamp(1.02rem, 1.5vw, 1.18rem); }
 
+/* Contact hero leads with its short label as the dominant serif heading; the
+   line beneath it is demoted to a quiet subhead (the page's own variation of
+   the global section-head flip, at hero scale). */
+.contact .page-hero .eyebrow {
+  display: block;
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(2.7rem, 6.6vw, 4.8rem); line-height: 1.08;
+  letter-spacing: -0.01em; text-transform: none;
+  color: var(--ink); margin-bottom: 0.6rem;
+}
+.contact .page-hero .eyebrow::before { display: none; }
+.contact .page-hero h1 {
+  font-family: var(--sans); font-weight: 500;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem); line-height: 1.5;
+  letter-spacing: 0; color: var(--body); margin-bottom: 0.75rem;
+}
+
 /* Every About section leads with its short label as the dominant heading;
    the descriptive sentence beneath it is a smaller, supporting subhead.
    The .section-head blocks already do this site-wide, so here we extend the
