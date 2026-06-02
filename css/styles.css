@@ -922,10 +922,11 @@ section { position: relative; }
   padding-top: clamp(124px, 16vh, 172px);
   padding-bottom: clamp(8px, 3vw, 30px);
 }
-/* Let the heading clearly lead; the descriptive line beneath it reads as a
-   smaller, supporting subhead rather than competing with the title. */
+/* Let the "Calculators" label read large and lead the section, with the
+   descriptive line beneath it kept small so it sits as a quiet footnote. */
+.calc-hero .eyebrow { font-size: clamp(1.05rem, 2.2vw, 1.5rem); letter-spacing: 0.14em; }
 .calc-hero h1 { font-size: clamp(3.1rem, 8vw, 5.6rem); }
-.calc-hero p { font-size: clamp(0.96rem, 1.3vw, 1.06rem); max-width: 560px; }
+.calc-hero p { font-size: clamp(0.8rem, 1vw, 0.9rem); max-width: 540px; }
 .workspace-section { padding-top: clamp(16px, 3vw, 40px); }
 
 /* The desktop frame: a titled window holding the wallpaper screen. */
