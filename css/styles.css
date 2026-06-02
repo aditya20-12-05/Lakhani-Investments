@@ -1068,6 +1068,27 @@ section { position: relative; }
 .calc-window .ctrl-top output { color: var(--accent); }
 .calc-window .co.is-grow .co-val { color: var(--accent); }
 
+/* Editable value field: type a number, or drag the slider. They stay synced. */
+.ctrl-field {
+  display: inline-flex; align-items: baseline; gap: 1px;
+  border-bottom: 1.5px dashed var(--line);
+  transition: border-color 0.2s var(--ease);
+}
+.ctrl-field:focus-within { border-bottom-style: solid; border-bottom-color: var(--accent, var(--blue)); }
+.cf-pre, .cf-suf {
+  font-family: var(--serif); font-weight: 600; font-size: 1.18rem; line-height: 1.1;
+  color: var(--accent, var(--blue));
+}
+.cf-suf { margin-left: 3px; font-size: 0.95rem; }
+.ctrl-val {
+  font-family: var(--serif); font-weight: 600; font-size: 1.18rem; line-height: 1.1;
+  color: var(--accent, var(--blue)); background: transparent; border: 0; outline: none;
+  text-align: right; width: 4ch; min-width: 2ch; padding: 0; cursor: text;
+  -moz-appearance: textfield;
+}
+.ctrl-val::-webkit-outer-spin-button,
+.ctrl-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
 /* Right pane: explanation. */
 .cw-info h4 {
   margin: 0 0 0.5rem;

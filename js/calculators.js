@@ -40,6 +40,17 @@
     if (f.type === "age") return v;
     return fmtINR(v);
   }
+  /* unit adornments + the plain (unit-less) value shown in the editable field */
+  function unitPre(f) { return f.type === "money" ? "₹" : ""; }
+  function unitSuf(f) {
+    if (f.type === "percent") return "%";
+    if (f.type === "years" || f.type === "age") return "yrs";
+    return "";
+  }
+  function fieldFmt(f, v) {
+    if (f.type === "money") return Math.round(v).toLocaleString("en-IN");
+    return String(Math.round(v * 100) / 100);
+  }
 
   /* ---------------- maths helpers ---------------- */
   function sipFV(P, r, Y) {
@@ -474,11 +485,19 @@
 
   function renderWindow(c) {
     const inputs = c.inputs.map(function (f) {
+      const pre = unitPre(f) ? '<span class="cf-pre">' + unitPre(f) + "</span>" : "";
+      const suf = unitSuf(f) ? '<span class="cf-suf">' + unitSuf(f) + "</span>" : "";
+      const mode = f.type === "percent" ? "decimal" : "numeric";
       return '<div class="ctrl">' +
-        '<div class="ctrl-top"><label for="cw_' + f.id + '">' + f.label + '</label><output id="out_' + f.id + '"></output></div>' +
-        '<input id="cw_' + f.id + '" type="range" min="' + f.min + '" max="' + f.max + '" step="' + f.step + '" value="' + f.value + '" />' +
-        '<div class="ctrl-scale"><span>' + fmtScale(f, f.min) + '</span><span>' + fmtScale(f, f.max) + '</span></div>' +
-        '</div>';
+        '<div class="ctrl-top">' +
+          '<label for="cw_' + f.id + '">' + f.label + "</label>" +
+          '<span class="ctrl-field" data-type="' + f.type + '">' + pre +
+            '<input class="ctrl-val" id="val_' + f.id + '" type="text" inputmode="' + mode + '" autocomplete="off" spellcheck="false" aria-label="' + f.label + '" />' +
+          suf + "</span>" +
+        "</div>" +
+        '<input id="cw_' + f.id + '" class="ctrl-range" type="range" min="' + f.min + '" max="' + f.max + '" step="' + f.step + '" value="' + f.value + '" aria-label="' + f.label + '" />' +
+        '<div class="ctrl-scale"><span>' + fmtScale(f, f.min) + "</span><span>" + fmtScale(f, f.max) + "</span></div>" +
+        "</div>";
     }).join("");
     const outs = c.outputs.map(function (o) {
       const cls = o.kind === "grow" ? " is-grow" : o.kind === "gain" ? " is-gain" : "";
@@ -506,28 +525,68 @@
 
   function bindInputs(c) {
     const fields = c.inputs.map(function (f) {
-      return { f: f, el: win.querySelector("#cw_" + f.id), out: win.querySelector("#out_" + f.id) };
+      return {
+        f: f,
+        range: win.querySelector("#cw_" + f.id),
+        val: win.querySelector("#val_" + f.id),
+        last: parseFloat(f.value)
+      };
     });
-    function trackFill(el) {
-      const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
-      el.style.setProperty("--p", pct + "%");
+    function clampF(x) { return Math.min(x.f.max, Math.max(x.f.min, x.last)); }
+    function trackFill(x) {
+      const pct = ((clampF(x) - x.f.min) / (x.f.max - x.f.min)) * 100;
+      x.range.style.setProperty("--p", Math.max(0, Math.min(100, pct)) + "%");
     }
-    function update() {
+    function sizeField(x, text) { x.val.style.width = Math.max(2, (text || "").length) + "ch"; }
+    function writeField(x, v) { const t = fieldFmt(x.f, v); x.val.value = t; sizeField(x, t); }
+    function recompute() {
       const vals = {};
-      fields.forEach(function (x) {
-        const v = parseFloat(x.el.value);
-        vals[x.f.id] = v;
-        x.out.textContent = fmtVal(x.f, v);
-        trackFill(x.el);
-      });
+      fields.forEach(function (x) { vals[x.f.id] = clampF(x); });
       const res = c.compute(vals);
       c.outputs.forEach(function (o) {
         const el = win.querySelector("#res_" + o.id);
         if (el) el.textContent = res[o.id] !== undefined ? res[o.id] : "–";
       });
     }
-    fields.forEach(function (x) { x.el.addEventListener("input", update); });
-    update();
+    fields.forEach(function (x) {
+      // dragging the slider
+      x.range.addEventListener("input", function () {
+        x.last = parseFloat(x.range.value);
+        writeField(x, x.last);
+        trackFill(x);
+        recompute();
+      });
+      // typing a number directly
+      x.val.addEventListener("input", function () {
+        sizeField(x, x.val.value);
+        const num = parseFloat(x.val.value.replace(/[^0-9.\-]/g, ""));
+        if (isNaN(num)) return; // wait for a valid number before reacting
+        x.last = num;
+        x.range.value = num; // the slider thumb clamps itself natively
+        trackFill(x);
+        recompute();
+      });
+      function commit() {
+        let num = parseFloat(x.val.value.replace(/[^0-9.\-]/g, ""));
+        if (isNaN(num)) num = x.last;
+        num = Math.min(x.f.max, Math.max(x.f.min, num));
+        x.last = num;
+        x.range.value = num;
+        trackFill(x);
+        writeField(x, num);
+        recompute();
+      }
+      x.val.addEventListener("blur", commit);
+      x.val.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); x.val.blur(); }
+      });
+      // initialise
+      x.range.value = x.f.value;
+      x.last = parseFloat(x.f.value);
+      writeField(x, x.last);
+      trackFill(x);
+    });
+    recompute();
   }
 
   function openCalc(id) {
