@@ -561,69 +561,6 @@ section { position: relative; }
 [data-fx-net] > .wrap { position: relative; z-index: 1; }
 .fx-net-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-/* ---------- self-drawing growth chart ---------- */
-.who-split { align-items: center; }
-.chart-card {
-  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.5rem 1.6rem 1.3rem; box-shadow: var(--shadow-soft);
-  position: relative; overflow: hidden;
-}
-.chart-card::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(420px circle at 85% 0%, rgba(0, 88, 168, 0.05), transparent 60%);
-}
-.cc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; position: relative; }
-.cc-title { display: block; font-family: "Fraunces", serif; font-weight: 600; font-size: 1.15rem; color: var(--ink); line-height: 1.2; }
-.cc-sub { display: block; font-size: 0.78rem; color: var(--body); margin-top: 0.2rem; }
-.cc-badge {
-  flex: none; font-size: 0.74rem; font-weight: 600; color: var(--green);
-  background: var(--bg-tint-green); border: 1px solid rgba(0, 128, 64, 0.18);
-  border-radius: 999px; padding: 0.32rem 0.7rem; white-space: nowrap;
-}
-.growth-chart { display: block; width: 100%; height: auto; margin: 0.9rem 0 0.4rem; overflow: visible; }
-.cc-grid line { stroke: var(--line); stroke-width: 1; }
-
-.gl-bar {
-  fill: var(--green-muted); opacity: 0.55;
-  transform: scaleY(0); transform-box: fill-box; transform-origin: bottom;
-}
-.gl-area { opacity: 0; }
-.gl-line {
-  stroke-dasharray: 1; stroke-dashoffset: 1; stroke-linecap: round; stroke-linejoin: round;
-}
-.gl-dot {
-  fill: var(--blue); transform: scale(0); transform-box: fill-box; transform-origin: center;
-}
-
-/* animate when the card scrolls in */
-.chart-card.in .gl-bar {
-  transition: transform 0.7s var(--ease);
-  transition-delay: calc(0.06s * var(--i));
-  transform: scaleY(1);
-}
-.chart-card.in .gl-area {
-  transition: opacity 0.8s ease 0.7s;
-  opacity: 1;
-}
-.chart-card.in .gl-line {
-  transition: stroke-dashoffset 1.5s var(--ease) 0.45s;
-  stroke-dashoffset: 0;
-}
-.chart-card.in .gl-dot {
-  transition: transform 0.45s var(--ease);
-  transition-delay: calc(0.6s + 0.13s * var(--i));
-  transform: scale(1);
-}
-
-.cc-foot {
-  display: flex; gap: 1.3rem; margin-top: 0.5rem;
-  font-size: 0.78rem; color: var(--body);
-}
-.cc-foot span { display: inline-flex; align-items: center; gap: 0.4rem; }
-.cc-foot .k { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
-.cc-foot .k.blue { background: var(--blue); }
-.cc-foot .k.green { background: var(--green-muted); }
-
 /* ---------- compounding calculator ---------- */
 .calc {
   display: grid; grid-template-columns: 1fr;
@@ -668,13 +605,6 @@ section { position: relative; }
 .co.is-grow .co-val { color: var(--blue); }
 .co.is-gain .co-val { color: var(--green); }
 .calc-note { margin: 1.2rem 0 0; font-size: 0.76rem; color: var(--body); opacity: 0.78; line-height: 1.5; }
-
-/* chart additions for the calculator */
-.gl-contrib { fill: rgba(0, 128, 64, 0.18); opacity: 0; }
-.gl-end { fill: var(--green); stroke: #fff; stroke-width: 1.5; opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; }
-.cc-ymax { font-family: "Inter", system-ui, sans-serif; font-weight: 600; font-size: 10px; fill: var(--body); }
-.chart-card.in .gl-contrib { transition: opacity 0.8s ease 0.5s; opacity: 1; }
-.chart-card.in .gl-end { transition: transform 0.5s var(--ease) 1.5s, opacity 0.4s ease 1.5s; transform: scale(1); opacity: 1; }
 
 @media (max-width: 860px) {
   .calc { grid-template-columns: 1fr; }
@@ -809,13 +739,6 @@ section { position: relative; }
   * { animation: none !important; transition: none !important; }
   .reveal, .reveal-x { opacity: 1 !important; transform: none !important; }
   html { scroll-behavior: auto; }
-  /* show the chart in its final drawn state without animating */
-  .gl-bar { transform: scaleY(1) !important; }
-  .gl-area { opacity: 1 !important; }
-  .gl-line { stroke-dashoffset: 0 !important; }
-  .gl-dot { transform: scale(1) !important; }
-  .gl-contrib { opacity: 1 !important; }
-  .gl-end { opacity: 1 !important; transform: scale(1) !important; }
   /* hide animated pulse rings, leave the solid markers */
   .gj-pulse { opacity: 0 !important; }
 }

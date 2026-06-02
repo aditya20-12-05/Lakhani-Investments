@@ -12,7 +12,7 @@
   ---------------------------------------------------------------- */
   if (fine && !reduce) {
     const sel =
-      ".pillar, .svc, .office, .value, .leader-card, .feature-card, .form, .crow, .chart-card";
+      ".pillar, .svc, .office, .value, .leader-card, .feature-card, .form, .crow";
     document.querySelectorAll(sel).forEach((card) => {
       if (getComputedStyle(card).position === "static") card.style.position = "relative";
       card.classList.add("fx-spot");
