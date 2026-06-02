@@ -605,6 +605,8 @@ section { position: relative; }
 .co.is-grow .co-val { color: var(--blue); }
 .co.is-gain .co-val { color: var(--green); }
 .calc-note { margin: 1.2rem 0 0; font-size: 0.76rem; color: var(--body); opacity: 0.78; line-height: 1.5; }
+/* Lead-in from the home compounding calc to the full calculators workspace. */
+.calc-more { text-align: center; margin-top: clamp(1.8rem, 4vw, 2.8rem); }
 /* Plain-language takeaway, tailored per calculator. */
 .cw-insight {
   margin: 1rem 0 0; padding: 0.85rem 1rem;
@@ -916,18 +918,9 @@ section { position: relative; }
    short explanation of what it is and how to use it.
    ============================================================ */
 
-/* Compact hero so the workspace shows just below the fold-line. */
-.calc-hero {
-  min-height: auto;
-  padding-top: clamp(124px, 16vh, 172px);
-  padding-bottom: clamp(8px, 3vw, 30px);
-}
-/* Let the "Calculators" label read large and lead the section, with the
-   descriptive line beneath it kept small so it sits as a quiet footnote. */
-.calc-hero .eyebrow { font-size: clamp(1.05rem, 2.2vw, 1.5rem); letter-spacing: 0.14em; }
-.calc-hero h1 { font-size: clamp(3.1rem, 8vw, 5.6rem); }
-.calc-hero p { font-size: clamp(0.8rem, 1vw, 0.9rem); max-width: 540px; }
-.workspace-section { padding-top: clamp(16px, 3vw, 40px); }
+/* No hero on this page: the workspace sits near the top of the page, with
+   enough breathing room above it to clear the fixed header. */
+.workspace-section { padding-top: clamp(104px, 13vh, 152px); }
 
 /* The desktop frame: a titled window holding the wallpaper screen. */
 .workspace {
