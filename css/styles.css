@@ -605,6 +605,14 @@ section { position: relative; }
 .co.is-grow .co-val { color: var(--blue); }
 .co.is-gain .co-val { color: var(--green); }
 .calc-note { margin: 1.2rem 0 0; font-size: 0.76rem; color: var(--body); opacity: 0.78; line-height: 1.5; }
+/* Plain-language takeaway, tailored per calculator. */
+.cw-insight {
+  margin: 1rem 0 0; padding: 0.85rem 1rem;
+  background: var(--bg-tint); border-left: 3px solid var(--accent, var(--blue));
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.9rem; line-height: 1.55; color: var(--blue-ink);
+}
+.cw-insight b { color: var(--accent, var(--blue)); font-weight: 700; }
 
 @media (max-width: 860px) {
   .calc { grid-template-columns: 1fr; }
