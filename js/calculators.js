@@ -84,6 +84,24 @@
     const n = Math.log(1 + (target * i) / (P * (1 + i))) / Math.log(1 + i);
     return isFinite(n) && n > 0 ? n : Infinity;
   }
+  /* a tidy ladder of durations spanning a field's range, on round numbers,
+     with the currently chosen value slotted in so it can be highlighted */
+  function durationLadder(f, selected) {
+    const span = f.max - f.min;
+    const raw = Math.max(f.step || 1, span / 6);
+    const NICE = [1, 2, 3, 5, 10, 15, 20, 25, 50];
+    let stride = NICE.reduce(function (p, c) { return Math.abs(c - raw) <= Math.abs(p - raw) ? c : p; });
+    stride = Math.max(stride, f.step || 1);
+    let start = Math.ceil(f.min / stride) * stride;
+    if (start < f.min) start += stride;
+    const out = [];
+    for (let d = start; d <= f.max + 1e-9; d += stride) out.push(Math.round(d));
+    const sel = Math.round(selected);
+    if (sel >= f.min && sel <= f.max && out.indexOf(sel) === -1) {
+      out.push(sel); out.sort(function (a, b) { return a - b; });
+    }
+    return out;
+  }
 
   /* ---------------- composition chart ----------------
      Takes [{label, amount, tone}] and draws a stacked proportion bar
@@ -104,6 +122,34 @@
         '<span class="cc-pct">' + w + '%</span></li>';
     }).join("");
     return '<div class="cc-bar">' + bar + '</div><ul class="cc-legend">' + legend + "</ul>";
+  }
+
+  /* ---------------- duration projection ----------------
+     For accumulation tools, a small table showing the same plan held for
+     fewer or more years, with the current choice highlighted. The maths for
+     each row lives in the calculator's `project` definition. */
+  function buildProjection(c, vals) {
+    const p = c.project;
+    if (!p) return "";
+    let f = null;
+    for (let k = 0; k < c.inputs.length; k++) { if (c.inputs[k].id === p.field) { f = c.inputs[k]; break; } }
+    if (!f) return "";
+    const sel = Math.round(vals[p.field]);
+    const ladder = durationLadder(f, sel);
+    const head = '<th scope="col">' + (p.durLabel || "Duration") + "</th>" +
+      p.cols.map(function (h) { return '<th scope="col">' + h + "</th>"; }).join("");
+    const rows = ladder.map(function (n) {
+      const cells = p.row(vals, n).map(function (cell) { return "<td>" + cell + "</td>"; }).join("");
+      const word = n === 1 ? " yr" : " yrs";
+      const cur = n === sel ? ' class="is-current"' : "";
+      return "<tr" + cur + '><th scope="row">' + n + word + "</th>" + cells + "</tr>";
+    }).join("");
+    return '<div class="cw-proj-head">' +
+        "<h4>How it grows over time</h4>" +
+        '<p class="cw-proj-sub">The same plan held for fewer or more years. Your current choice is highlighted.</p>' +
+      "</div>" +
+      '<div class="proj-scroll"><table class="proj-table">' +
+        "<thead><tr>" + head + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
   }
 
   /* ---------------- icons ---------------- */
@@ -866,6 +912,71 @@
   const byId = {};
   CALCS.forEach(function (c) { byId[c.id] = c; });
 
+  /* Duration projections for the accumulation tools. Kept here so each row's
+     maths sits in one place; attached to the calculators by id below. */
+  const PROJECTORS = {
+    sip: {
+      field: "years", durLabel: "Years", cols: ["You invest", "It could become"],
+      row: function (v, n) {
+        return [fmtINR(v.monthly * Math.round(n * 12)), fmtINR(sipFV(v.monthly, v.rate, n))];
+      }
+    },
+    stepup: {
+      field: "years", durLabel: "Years", cols: ["You invest", "It could become"],
+      row: function (v, n) {
+        const i = v.rate / 100 / 12; let val = 0, inv = 0;
+        for (let y = 0; y < n; y++) {
+          const P = v.monthly * Math.pow(1 + v.stepup / 100, y);
+          for (let m = 0; m < 12; m++) { val = (val + P) * (1 + i); inv += P; }
+        }
+        return [fmtINR(inv), fmtINR(val)];
+      }
+    },
+    lumpsum: {
+      field: "years", durLabel: "Years", cols: ["It could become", "Growth"],
+      row: function (v, n) {
+        const fv = v.amount * Math.pow(1 + v.rate / 100, n);
+        return [fmtINR(fv), (Math.round(fv / v.amount * 10) / 10) + "×"];
+      }
+    },
+    fd: {
+      field: "years", durLabel: "Term", cols: ["Maturity", "After tax"],
+      row: function (v, n) {
+        const fv = v.principal * Math.pow(1 + v.rate / 100 / 4, 4 * n);
+        const tax = (fv - v.principal) * v.taxSlab / 100;
+        return [fmtINR(fv), fmtINR(fv - tax)];
+      }
+    },
+    rd: {
+      field: "years", durLabel: "Term", cols: ["You deposit", "Maturity"],
+      row: function (v, n) {
+        const i = v.rate / 100 / 12, N = Math.round(n * 12); let val = 0;
+        for (let m = 0; m < N; m++) val = (val + v.monthly) * (1 + i);
+        return [fmtINR(v.monthly * N), fmtINR(val)];
+      }
+    },
+    ppf: {
+      field: "years", durLabel: "Years", cols: ["You invest", "Maturity"],
+      row: function (v, n) {
+        let bal = 0; for (let y = 0; y < n; y++) bal = (bal + v.yearly) * (1 + v.rate / 100);
+        return [fmtINR(v.yearly * n), fmtINR(bal)];
+      }
+    },
+    epf: {
+      field: "years", durLabel: "Service", cols: ["You invest", "Corpus"],
+      row: function (v, n) {
+        const i = v.rate / 100 / 12; let balE = 0, balR = 0, inv = 0, B = v.basic;
+        for (let y = 0; y < n; y++) {
+          const ce = B * 0.12, cr = B * 0.0367;
+          for (let m = 0; m < 12; m++) { balE = (balE + ce) * (1 + i); balR = (balR + cr) * (1 + i); inv += ce + cr; }
+          B *= (1 + v.growth / 100);
+        }
+        return [fmtINR(inv), fmtINR(balE + balR)];
+      }
+    }
+  };
+  Object.keys(PROJECTORS).forEach(function (id) { if (byId[id]) byId[id].project = PROJECTORS[id]; });
+
   /* ---------------- workspace toolbar: greeting, date, search ---------------- */
   const screen = deck.parentNode;
   const toolbar = document.createElement("div");
@@ -989,6 +1100,7 @@
           '<div class="cw-outputs">' + outs + '</div>' +
           '<div class="cw-chart" id="cwChart" hidden></div>' +
           '<p class="cw-insight" id="cwInsight" hidden></p>' +
+          '<div class="cw-proj" id="cwProj" hidden></div>' +
           '<p class="calc-note">' + (c.note || DISC) + '</p>' +
         '</div>' +
         '<div class="cw-pane cw-info">' +
@@ -1031,6 +1143,11 @@
       if (ins) {
         if (res._insight) { ins.innerHTML = res._insight; ins.hidden = false; }
         else { ins.hidden = true; }
+      }
+      const proj = win.querySelector("#cwProj");
+      if (proj) {
+        if (c.project) { proj.innerHTML = buildProjection(c, vals); proj.hidden = false; }
+        else { proj.hidden = true; proj.innerHTML = ""; }
       }
     }
     fields.forEach(function (x) {
