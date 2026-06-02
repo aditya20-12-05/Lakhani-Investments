@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculators · Lakhani Investment</title>
+  <meta name="description" content="A workspace of financial calculators, from SIP and retirement to FD, EMI and PPF. Open an app, move the sliders and see what disciplined planning could become." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="calculators">
+  <div id="nav-root"></div>
+
+  <section class="page-hero hero-center calc-hero" data-fx-net>
+    <div class="wrap reveal">
+      <span class="eyebrow">Calculators</span>
+      <h1>Run the numbers.</h1>
+      <p>A workspace of planning tools, from your first SIP to retirement. Open an app, move the sliders and see what steady, disciplined investing could become. Illustrative only; actual returns vary and are not guaranteed.</p>
+    </div>
+  </section>
+
+  <section class="section workspace-section">
+    <div class="wrap">
+      <div class="workspace reveal" data-delay="1">
+        <div class="workspace-bar">
+          <span class="ws-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="ws-title">Lakhani Workspace</span>
+          <span class="ws-clock" id="wsClock" aria-hidden="true">--:--</span>
+        </div>
+        <div class="workspace-screen">
+          <div id="appDeck" class="app-deck">
+            <noscript><p style="text-align:center;color:var(--body)">These calculators need JavaScript enabled.</p></noscript>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator window (modal). Contents are built by js/calculators.js. -->
+  <div class="calc-modal" id="calcModal" hidden>
+    <div class="calc-modal-backdrop" data-close></div>
+    <div class="calc-window" id="calcWindow" role="dialog" aria-modal="true" aria-labelledby="cwTitle"></div>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/fx.js"></script>
+  <script src="js/calculators.js"></script>
+</body>
+</html>
