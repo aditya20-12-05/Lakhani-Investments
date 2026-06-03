@@ -1180,20 +1180,27 @@ section { position: relative; }
 .cw-how li { font-size: 0.93rem; line-height: 1.6; color: var(--body); margin-bottom: 0.45rem; }
 .cw-how li::marker { color: var(--accent); font-weight: 700; }
 
-/* ---------- composition breakdown chart ---------- */
-.cw-chart { margin-top: 1.1rem; }
-.cc-bar {
-  display: flex; height: 14px; border-radius: 999px; overflow: hidden;
-  background: var(--line); box-shadow: inset 0 0 0 1px rgba(0, 30, 70, 0.04);
-}
-.cc-seg { height: 100%; transition: width 0.45s var(--ease); }
+/* ---------- composition breakdown (donut) ---------- */
+.cw-viz { margin-top: 1.4rem; }
+.cw-chart { display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; }
+.cd-wrap { flex: 0 0 auto; }
+.cd-svg { width: 120px; height: 120px; display: block; }
+.cd-track { stroke: var(--line); }
+.cd-seg { transition: stroke-dasharray 0.5s var(--ease); }
+.cd-seg.cc-in   { stroke: #9db8d0; }
+.cd-seg.cc-grow { stroke: var(--green); }
+.cd-seg.cc-warn { stroke: #e0894e; }
+.cd-seg.cc-alt  { stroke: var(--blue); }
+.cd-c1 { font-family: var(--serif); font-weight: 600; font-size: 4.8px; fill: var(--blue-ink); }
+.cd-c2 { font-family: var(--sans); font-weight: 700; font-size: 2.5px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--body); }
+/* legend (dot colours shared with the donut) */
 .cc-in   { background: #9db8d0; }
 .cc-grow { background: var(--green); }
 .cc-warn { background: #e0894e; }
 .cc-alt  { background: var(--blue); }
 .cc-legend {
-  list-style: none; margin: 0.8rem 0 0; padding: 0;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 1.4rem;
+  list-style: none; margin: 0; padding: 0;
+  flex: 1 1 170px; display: flex; flex-direction: column; gap: 0.5rem;
 }
 .cc-key { display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; }
 .cc-dot { width: 10px; height: 10px; border-radius: 3px; flex: 0 0 auto; }

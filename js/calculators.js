@@ -104,49 +104,86 @@
   }
 
   /* ---------------- composition chart ----------------
-     Takes [{label, amount, tone}] and draws a stacked proportion bar
-     with a small legend. tone is one of: in, grow, warn, alt. */
+     Takes [{label, amount, tone}] and draws a donut (pie) with a centre
+     total and a small legend. tone is one of: in, grow, warn, alt.
+     Typically the first slice is what you put in and the second is what
+     your money made on top. */
   function buildChart(parts) {
     const segs = parts.filter(function (p) { return p.amount > 0; });
     const total = segs.reduce(function (s, p) { return s + p.amount; }, 0);
     if (total <= 0) return "";
-    const bar = segs.map(function (p) {
-      const w = (p.amount / total) * 100;
-      return '<span class="cc-seg cc-' + (p.tone || "in") + '" style="width:' + w.toFixed(2) + '%" title="' + p.label + '"></span>';
+    // r chosen so the circumference is 100, letting dasharray read as a percent
+    let acc = 0;
+    const ring = segs.map(function (p) {
+      const len = (p.amount / total) * 100;
+      const off = 25 - acc; // start the first slice at 12 o'clock, stack clockwise
+      acc += len;
+      return '<circle class="cd-seg cc-' + (p.tone || "in") + '" cx="21" cy="21" r="15.915" ' +
+        'fill="none" stroke-width="5.5" stroke-linecap="butt" ' +
+        'stroke-dasharray="' + len.toFixed(3) + " " + (100 - len).toFixed(3) + '" ' +
+        'stroke-dashoffset="' + off.toFixed(3) + '"><title>' + p.label + "</title></circle>";
     }).join("");
+    const donut = '<div class="cd-wrap">' +
+      '<svg class="cd-svg" viewBox="0 0 42 42" role="img" aria-label="Money breakdown">' +
+        '<circle class="cd-track" cx="21" cy="21" r="15.915" fill="none" stroke-width="5.5"></circle>' +
+        ring +
+        '<text class="cd-c1" x="21" y="20.6" text-anchor="middle">' + fmtINR(total) + "</text>" +
+        '<text class="cd-c2" x="21" y="24.4" text-anchor="middle">total</text>' +
+      "</svg></div>";
     const legend = segs.map(function (p) {
-      const w = total > 0 ? Math.round((p.amount / total) * 100) : 0;
+      const w = Math.round((p.amount / total) * 100);
       return '<li class="cc-key"><span class="cc-dot cc-' + (p.tone || "in") + '"></span>' +
         '<span class="cc-lbl">' + p.label + '</span>' +
         '<span class="cc-amt">' + fmtINR(p.amount) + '</span>' +
         '<span class="cc-pct">' + w + '%</span></li>';
     }).join("");
-    return '<div class="cc-bar">' + bar + '</div><ul class="cc-legend">' + legend + "</ul>";
+    return donut + '<ul class="cc-legend">' + legend + "</ul>";
   }
 
   /* ---------------- duration projection ----------------
-     For accumulation tools, a small table showing the same plan held for
-     fewer or more years, with the current choice highlighted. The maths for
-     each row lives in the calculator's `project` definition. */
+     For every tool, a small table showing the same plan held for fewer or
+     more years (or ages, or months), with the current choice highlighted.
+     The maths for each row lives in the calculator's `project` definition,
+     which can drive the ladder from an input field (`field`) or from a
+     synthetic range (`range` + optional `currentN` to mark a row). */
+  function projUnit(p, f) {
+    if (p.unit) return p.unit;
+    if (f) return f.type;
+    return "years";
+  }
+  function rowLabel(n, unit) {
+    if (unit === "months") return n + (n === 1 ? " mo" : " mos");
+    if (unit === "age") return String(n);
+    if (unit === "years") return n + (n === 1 ? " yr" : " yrs");
+    return String(n);
+  }
   function buildProjection(c, vals) {
     const p = c.project;
     if (!p) return "";
-    let f = null;
-    for (let k = 0; k < c.inputs.length; k++) { if (c.inputs[k].id === p.field) { f = c.inputs[k]; break; } }
-    if (!f) return "";
-    const sel = Math.round(vals[p.field]);
-    const ladder = durationLadder(f, sel);
+    let f = null, range = null, sel = null;
+    if (p.field) {
+      for (let k = 0; k < c.inputs.length; k++) { if (c.inputs[k].id === p.field) { f = c.inputs[k]; break; } }
+      if (!f) return "";
+      range = f;
+      sel = Math.round(vals[p.field]);
+    } else if (p.range) {
+      range = p.range;
+      if (p.currentN) { const cn = p.currentN(vals); sel = (cn == null || !isFinite(cn)) ? null : Math.round(cn); }
+    } else {
+      return "";
+    }
+    const unit = projUnit(p, f);
+    const ladder = durationLadder(range, sel == null ? range.min : sel);
     const head = '<th scope="col">' + (p.durLabel || "Duration") + "</th>" +
       p.cols.map(function (h) { return '<th scope="col">' + h + "</th>"; }).join("");
     const rows = ladder.map(function (n) {
       const cells = p.row(vals, n).map(function (cell) { return "<td>" + cell + "</td>"; }).join("");
-      const word = n === 1 ? " yr" : " yrs";
-      const cur = n === sel ? ' class="is-current"' : "";
-      return "<tr" + cur + '><th scope="row">' + n + word + "</th>" + cells + "</tr>";
+      const cur = (sel != null && n === sel) ? ' class="is-current"' : "";
+      return "<tr" + cur + '><th scope="row">' + rowLabel(n, unit) + "</th>" + cells + "</tr>";
     }).join("");
     return '<div class="cw-proj-head">' +
-        "<h4>How it grows over time</h4>" +
-        '<p class="cw-proj-sub">The same plan held for fewer or more years. Your current choice is highlighted.</p>' +
+        "<h4>" + (p.title || "How it grows over time") + "</h4>" +
+        '<p class="cw-proj-sub">' + (p.sub || "The same plan held for fewer or more years. Your current choice is highlighted.") + "</p>" +
       "</div>" +
       '<div class="proj-scroll"><table class="proj-table">' +
         "<thead><tr>" + head + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
@@ -973,6 +1010,167 @@
         }
         return [fmtINR(inv), fmtINR(balE + balR)];
       }
+    },
+    goal: {
+      field: "years", durLabel: "Years to goal", cols: ["Monthly SIP", "Or lump today"],
+      title: "Reaching it in fewer or more years",
+      sub: "The same goal, given more or less time to fund it. Your current choice is highlighted.",
+      row: function (v, n) {
+        const fc = v.target * Math.pow(1 + v.inflation / 100, n);
+        return [fmtINR(sipFor(fc, v.rate, n)), fmtINR(fc / Math.pow(1 + v.rate / 100, n))];
+      }
+    },
+    cagr: {
+      field: "years", durLabel: "Period", cols: ["CAGR", "Real CAGR"],
+      title: "The same growth over different periods",
+      sub: "If the same gain happened over fewer or more years, the yearly rate changes. Your current choice is highlighted.",
+      row: function (v, n) {
+        const ratio = v.final / v.initial;
+        const cagr = Math.pow(ratio, 1 / n) - 1;
+        const real = (1 + cagr) / (1 + v.inflation / 100) - 1;
+        return [fmtPct(cagr * 100), fmtPct(real * 100)];
+      }
+    },
+    retirement: {
+      field: "retYears", durLabel: "Years in retirement", cols: ["Corpus needed", "Monthly SIP"],
+      title: "How long the money must last",
+      sub: "A longer retirement needs a bigger corpus, and a bigger SIP. Your current choice is highlighted.",
+      row: function (v, n) {
+        const yToRet = Math.max(1, v.retAge - v.curAge);
+        const futMonthly = v.monthlyExpense * Math.pow(1 + v.inflation / 100, yToRet);
+        const annual = futMonthly * 12;
+        const realRate = ((1 + v.postReturn / 100) / (1 + v.inflation / 100)) - 1;
+        let corpus;
+        if (Math.abs(realRate) < 1e-6) corpus = annual * n;
+        else corpus = annual * (1 - Math.pow(1 + realRate, -n)) / realRate * (1 + realRate);
+        const fvCurrent = v.current * Math.pow(1 + v.preReturn / 100, yToRet);
+        const sip = sipFor(Math.max(0, corpus - fvCurrent), v.preReturn, yToRet);
+        return [fmtINR(corpus), fmtINR(sip)];
+      }
+    },
+    nps: {
+      field: "curAge", durLabel: "Start age", cols: ["Corpus at 60", "Monthly pension"],
+      title: "The earlier you start",
+      sub: "Starting younger leaves more years to compound to 60. Your current age is highlighted.",
+      row: function (v, n) {
+        const yToRet = Math.max(1, 60 - n);
+        const corpus = sipFV(v.monthly, v.rate, yToRet);
+        const pension = corpus * v.annuityPct / 100 * v.annuityRate / 100 / 12;
+        return [fmtINR(corpus), fmtINR(pension)];
+      }
+    },
+    swp: {
+      field: "years", durLabel: "Period", cols: ["Total withdrawn", "Balance left"],
+      title: "Drawing for fewer or more years",
+      sub: "The same corpus and withdrawal, held over different periods. Your current choice is highlighted.",
+      row: function (v, n) {
+        const i = v.rate / 100 / 12, g = v.inflation / 100;
+        let b = v.corpus, withdrawn = 0, w = v.withdraw; const N = Math.round(n * 12);
+        for (let m = 1; m <= N; m++) {
+          if (b <= 0) break;
+          if (m > 1 && (m - 1) % 12 === 0) w *= (1 + g);
+          const grown = b * (1 + i), draw = Math.min(w, grown);
+          b = grown - draw; withdrawn += draw;
+        }
+        return [fmtINR(Math.max(0, withdrawn)), fmtINR(Math.max(0, b))];
+      }
+    },
+    ssy: {
+      range: { min: 1, max: 21, step: 1 }, unit: "years", durLabel: "Year", cols: ["You deposit", "Balance"],
+      title: "How the balance builds to maturity",
+      sub: "Deposits run for 15 years; the account matures at 21, which is highlighted.",
+      currentN: function () { return 21; },
+      row: function (v, n) {
+        let bal = 0; for (let y = 1; y <= n; y++) { if (y <= 15) bal += v.yearly; bal *= (1 + v.rate / 100); }
+        return [fmtINR(v.yearly * Math.min(n, 15)), fmtINR(bal)];
+      }
+    },
+    emi: {
+      field: "tenure", durLabel: "Tenure", cols: ["Monthly EMI", "Total interest"],
+      title: "How the tenure changes the cost",
+      sub: "The same loan over a shorter or longer tenure. Your current choice is highlighted.",
+      row: function (v, n) {
+        const e = emiOf(v.principal, v.rate, n);
+        return [fmtINR(e), fmtINR(e * Math.round(n * 12) - v.principal)];
+      }
+    },
+    inflation: {
+      field: "years", durLabel: "Years ahead", cols: ["Future cost", "Worth then"],
+      title: "How prices climb over time",
+      sub: "Today's cost projected fewer or more years ahead. Your current choice is highlighted.",
+      row: function (v, n) {
+        return [fmtINR(v.amount * Math.pow(1 + v.rate / 100, n)), fmtINR(v.amount / Math.pow(1 + v.rate / 100, n))];
+      }
+    },
+    gratuity: {
+      field: "years", durLabel: "Service", cols: ["Gratuity", "Per year"],
+      title: "How it builds with service",
+      sub: "15 days' pay for each completed year, capped at ₹20 L. Your current service is highlighted.",
+      row: function (v, n) {
+        const raw = (15 / 26) * v.salary * n;
+        return [fmtINR(Math.min(raw, 2000000)), fmtINR((15 / 26) * v.salary)];
+      }
+    },
+    education: {
+      field: "startAge", durLabel: "Starts at age", cols: ["Cost then", "Monthly SIP"],
+      title: "The longer you have to save",
+      sub: "If the course begins earlier or later, the saving window changes. Your current choice is highlighted.",
+      row: function (v, n) {
+        const years = Math.max(1, n - v.childAge);
+        const fc = v.costToday * Math.pow(1 + v.eduInflation / 100, years);
+        const fvCurrent = v.current * Math.pow(1 + v.rate / 100, years);
+        return [fmtINR(fc), fmtINR(sipFor(Math.max(0, fc - fvCurrent), v.rate, years))];
+      }
+    },
+    wedding: {
+      field: "years", durLabel: "Years to go", cols: ["Budget then", "Monthly SIP"],
+      title: "Sooner or later",
+      sub: "The same budget for a wedding nearer or further away. Your current choice is highlighted.",
+      row: function (v, n) {
+        const fc = v.costToday * Math.pow(1 + v.inflation / 100, n);
+        const fvCurrent = v.current * Math.pow(1 + v.rate / 100, n);
+        return [fmtINR(fc), fmtINR(sipFor(Math.max(0, fc - fvCurrent), v.rate, n))];
+      }
+    },
+    home: {
+      field: "years", durLabel: "Years to buy", cols: ["Price then", "SIP for down pmt"],
+      title: "Buying sooner or later",
+      sub: "The same home bought nearer or further away. Your current choice is highlighted.",
+      row: function (v, n) {
+        const fp = v.priceToday * Math.pow(1 + v.propInflation / 100, n);
+        return [fmtINR(fp), fmtINR(sipFor(fp * v.downPct / 100, v.rate, n))];
+      }
+    },
+    purchase: {
+      field: "years", durLabel: "Years to save", cols: ["Cost if you wait", "Save monthly"],
+      title: "Waiting a little longer",
+      sub: "The same item saved up for over fewer or more years. Your current choice is highlighted.",
+      row: function (v, n) {
+        const fc = v.costToday * Math.pow(1 + v.inflation / 100, n);
+        return [fmtINR(fc), fmtINR(sipFor(fc, v.rate, n))];
+      }
+    },
+    emergency: {
+      field: "months", durLabel: "Cover", cols: ["Fund needed", "Time to build"],
+      title: "More cover, more to save",
+      sub: "A bigger safety net takes longer to build. Your current choice is highlighted.",
+      row: function (v, n) {
+        const target = v.monthlyExpense * n;
+        const gap = Math.max(0, target - v.current);
+        return [fmtINR(target), gap <= 0 ? "Funded" : fmtDuration(Math.ceil(gap / v.monthlySaving))];
+      }
+    },
+    crore: {
+      range: { min: 1, max: 40, step: 1 }, unit: "years", durLabel: "Years", cols: ["You invest", "Corpus"],
+      title: "How your money grows year by year",
+      sub: "A steady monthly SIP, held for fewer or more years. The year you cross the target is highlighted.",
+      currentN: function (v) {
+        const n = monthsToTarget(v.monthly, v.rate, v.target);
+        return isFinite(n) ? Math.ceil(n / 12) : null;
+      },
+      row: function (v, n) {
+        return [fmtINR(v.monthly * Math.round(n * 12)), fmtINR(sipFV(v.monthly, v.rate, n))];
+      }
     }
   };
   Object.keys(PROJECTORS).forEach(function (id) { if (byId[id]) byId[id].project = PROJECTORS[id]; });
@@ -1098,7 +1296,6 @@
         '<div class="cw-pane cw-tool">' +
           '<div class="calc-controls cw-controls">' + inputs + '</div>' +
           '<div class="cw-outputs">' + outs + '</div>' +
-          '<div class="cw-chart" id="cwChart" hidden></div>' +
           '<p class="cw-insight" id="cwInsight" hidden></p>' +
           '<div class="cw-proj" id="cwProj" hidden></div>' +
           '<p class="calc-note">' + (c.note || DISC) + '</p>' +
@@ -1106,6 +1303,10 @@
         '<div class="cw-pane cw-info">' +
           "<h4>What it is</h4><p>" + c.about + "</p>" +
           '<h4>How to use it</h4><ol class="cw-how">' + how + "</ol>" +
+          '<div class="cw-viz" id="cwChart" hidden>' +
+            "<h4>Where the money comes from</h4>" +
+            '<div class="cw-chart" id="cwChartBody"></div>' +
+          '</div>' +
         '</div>' +
       '</div>';
   }
@@ -1135,9 +1336,10 @@
         if (el) el.textContent = res[o.id] !== undefined ? res[o.id] : "–";
       });
       const chart = win.querySelector("#cwChart");
-      if (chart) {
-        if (res._chart && res._chart.length) { chart.innerHTML = buildChart(res._chart); chart.hidden = false; }
-        else { chart.hidden = true; chart.innerHTML = ""; }
+      const chartBody = win.querySelector("#cwChartBody");
+      if (chart && chartBody) {
+        if (res._chart && res._chart.length) { chartBody.innerHTML = buildChart(res._chart); chart.hidden = false; }
+        else { chart.hidden = true; chartBody.innerHTML = ""; }
       }
       const ins = win.querySelector("#cwInsight");
       if (ins) {
