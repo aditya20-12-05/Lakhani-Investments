@@ -466,22 +466,37 @@ section { position: relative; }
 .tl-item h4 { margin: 0.2rem 0 0.2rem; font-size: 1.12rem; }
 .tl-item p { font-size: 0.95rem; margin: 0; }
 
-/* ---------- leader profile ---------- */
-.leader { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(2rem,5vw,4rem); align-items: center; }
-.leader-card {
-  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
-  background: linear-gradient(160deg, #0a2138, #06121f); color: #fff; padding: 2.4rem; position: relative;
+/* ---------- meet the team ---------- */
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+.team-card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 2rem;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
-.leader-card .badge {
-  display: inline-block; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-  background: rgba(255,255,255,0.12); padding: 0.4rem 0.9rem; border-radius: 999px; margin-bottom: 1rem; color: #9fd3b6;
+.team-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+.tm-photo {
+  width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center;
+  margin-bottom: 1.3rem; background: linear-gradient(150deg, var(--blue), var(--green)); color: #fff;
 }
-.leader-card h3 { color: #fff; font-size: 1.9rem; }
-.leader-card .role { color: #8fb3cf; font-weight: 500; margin-bottom: 1.2rem; }
-.creds { list-style: none; padding: 0; margin: 1.2rem 0 0; display: grid; gap: 0.7rem; }
-.creds li { display: flex; gap: 0.7rem; font-size: 0.92rem; color: rgba(205,217,230,0.92); }
-.creds li b { color: #fff; }
-.creds li .yr { color: var(--green-soft); font-weight: 600; }
+.tm-initials { font-family: var(--serif); font-weight: 600; font-size: 1.9rem; letter-spacing: 0.02em; }
+.tm-name { margin: 0 0 0.25rem; font-size: 1.4rem; }
+.tm-role { color: var(--green); font-weight: 600; font-size: 0.92rem; margin: 0 0 1rem; }
+.tm-bio { font-size: 0.95rem; margin: 0 0 1.3rem; }
+.tm-creds { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+.tm-creds li { display: flex; gap: 0.7rem; font-size: 0.88rem; color: var(--body); }
+.tm-creds li b { color: var(--ink); }
+.tm-creds li .yr { font-family: var(--serif); font-weight: 600; color: var(--blue); flex: 0 0 auto; }
+
+/* empty placeholder slots */
+.team-card.is-empty {
+  border-style: dashed; background: var(--bg-tint); box-shadow: none; min-height: 220px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.team-card.is-empty:hover { transform: none; box-shadow: none; }
+.team-card.is-empty .tm-photo {
+  background: transparent; border: 2px dashed var(--line); color: #aebccb; margin-bottom: 1rem;
+}
+.team-card.is-empty .tm-name { color: var(--body); font-size: 1.15rem; margin: 0 0 0.2rem; }
+.team-card.is-empty .tm-role { color: var(--body); opacity: 0.6; font-weight: 500; margin: 0; }
 
 /* ---------- contact ---------- */
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
@@ -553,7 +568,7 @@ section { position: relative; }
 }
 .fx-spot:hover .fx-glow { opacity: 1; }
 .svc.is-green { --fx-glow: rgba(0, 128, 64, 0.13); }
-.feature-card, .leader-card { --fx-glow: rgba(127, 195, 160, 0.16); }
+.feature-card { --fx-glow: rgba(127, 195, 160, 0.16); }
 .crow { --fx-glow: rgba(0, 88, 168, 0.10); }
 
 /* particle-network canvas backgrounds */
@@ -757,7 +772,8 @@ section { position: relative; }
 @media (max-width: 960px) {
   .pillars, .svc-grid, .contact-grid { grid-template-columns: 1fr; }
   .values { grid-template-columns: repeat(2, 1fr); }
-  .split, .leader { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .split { grid-template-columns: 1fr; }
   .split.flip .split-media { order: 0; }
   .footer-top { grid-template-columns: 1fr 1fr; }
 }
@@ -775,6 +791,7 @@ section { position: relative; }
   .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
   .stat::after { display: none; }
   .values { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; gap: 1.6rem; }
   body { font-size: 16px; }
 }
@@ -822,6 +839,24 @@ section { position: relative; }
   font-size: clamp(1.15rem, 2.4vw, 1.5rem); line-height: 1.5;
   letter-spacing: 0; color: var(--body); margin-bottom: 0.75rem;
 }
+
+/* Service hero: the service name leads as the dominant serif heading; the
+   tagline beneath drops to a small, body-sized quote and the description
+   stays as quiet supporting text. Mirrors the contact hero treatment. */
+.svc-hero .eyebrow {
+  display: block;
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(2.7rem, 6.6vw, 4.8rem); line-height: 1.06;
+  letter-spacing: -0.01em; text-transform: none;
+  color: var(--ink); margin-bottom: 0.7rem;
+}
+.svc-hero .eyebrow::before { display: none; }
+.svc-hero h1 {
+  font-family: var(--sans); font-weight: 500;
+  font-size: clamp(1.08rem, 1.8vw, 1.32rem); line-height: 1.5;
+  letter-spacing: 0; color: var(--body); margin-bottom: 0.5rem;
+}
+.svc-hero p { font-size: clamp(1rem, 1.5vw, 1.1rem); }
 
 /* Every About section leads with its short label as the dominant heading;
    the descriptive sentence beneath it is a smaller, supporting subhead.
@@ -1180,19 +1215,22 @@ section { position: relative; }
 .cw-how li { font-size: 0.93rem; line-height: 1.6; color: var(--body); margin-bottom: 0.45rem; }
 .cw-how li::marker { color: var(--accent); font-weight: 700; }
 
-/* ---------- composition breakdown (donut) ---------- */
-.cw-viz { margin-top: 1.4rem; }
-.cw-chart { display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; }
+/* ---------- composition breakdown (donut) ----------
+   The donut sits in the right info pane, which is shorter than the tool
+   pane beside it, so it is sized generously and the legend stacks beneath
+   to fill the space rather than leave a gap below. */
+.cw-viz { margin-top: 1.6rem; }
+.cw-chart { display: flex; flex-direction: column; align-items: center; gap: 1.4rem; }
 .cd-wrap { flex: 0 0 auto; }
-.cd-svg { width: 120px; height: 120px; display: block; }
+.cd-svg { width: clamp(190px, 18vw, 248px); height: clamp(190px, 18vw, 248px); display: block; }
 .cd-track { stroke: var(--line); }
 .cd-seg { transition: stroke-dasharray 0.5s var(--ease); }
 .cd-seg.cc-in   { stroke: #9db8d0; }
 .cd-seg.cc-grow { stroke: var(--green); }
 .cd-seg.cc-warn { stroke: #e0894e; }
 .cd-seg.cc-alt  { stroke: var(--blue); }
-.cd-c1 { font-family: var(--serif); font-weight: 600; font-size: 4.8px; fill: var(--blue-ink); }
-.cd-c2 { font-family: var(--sans); font-weight: 700; font-size: 2.5px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--body); }
+.cd-c1 { font-family: var(--serif); font-weight: 600; font-size: 4.6px; fill: var(--blue-ink); }
+.cd-c2 { font-family: var(--sans); font-weight: 700; font-size: 2.4px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--body); }
 /* legend (dot colours shared with the donut) */
 .cc-in   { background: #9db8d0; }
 .cc-grow { background: var(--green); }
@@ -1200,10 +1238,10 @@ section { position: relative; }
 .cc-alt  { background: var(--blue); }
 .cc-legend {
   list-style: none; margin: 0; padding: 0;
-  flex: 1 1 170px; display: flex; flex-direction: column; gap: 0.5rem;
+  width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 0.7rem;
 }
-.cc-key { display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; }
-.cc-dot { width: 10px; height: 10px; border-radius: 3px; flex: 0 0 auto; }
+.cc-key { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
+.cc-dot { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
 .cc-lbl { flex: 1 1 auto; color: var(--body); }
 .cc-amt { font-family: var(--serif); font-weight: 600; color: var(--blue-ink); }
 .cc-pct { color: var(--body); opacity: 0.65; font-variant-numeric: tabular-nums; min-width: 2.6ch; text-align: right; }
