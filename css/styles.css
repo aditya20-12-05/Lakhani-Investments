@@ -1,7 +1,7 @@
 /* ============================================================
    Lakhani Investment - brand stylesheet
    Blue #0058A8 (primary) · Green #008040 (secondary)
-   Fraunces (headlines) · Inter (body)
+   IBM Plex Sans (headlines + body) · IBM Plex Mono (figures)
    ============================================================ */
 
 :root {
@@ -19,8 +19,11 @@
   --bg-tint-green: #f1f8f3;
   --white: #ffffff;
 
-  --serif: "Fraunces", Georgia, "Times New Roman", serif;
-  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Headlines and body share one institutional grotesque; figures use a
+     distinct monospaced ledger face so numbers read like a statement. */
+  --display: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --maxw: 1200px;
   --radius: 18px;
@@ -46,7 +49,7 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--serif);
+  font-family: var(--display);
   color: var(--ink);
   font-weight: 600;
   line-height: 1.08;
@@ -247,7 +250,7 @@ section { position: relative; }
    line beneath it is demoted to a supporting subhead. */
 .section-head .eyebrow {
   display: block;
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 600;
   font-size: clamp(2rem, 4.6vw, 3.3rem);
   line-height: 1.08;
@@ -289,7 +292,7 @@ section { position: relative; }
 }
 .stat:last-child::after { display: none; }
 .stat .num {
-  font-family: var(--serif); font-weight: 600; color: var(--green);
+  font-family: var(--num); font-weight: 600; color: var(--green);
   font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1; letter-spacing: -0.02em;
 }
 .stat .num .suf { color: var(--blue); }
@@ -308,7 +311,7 @@ section { position: relative; }
 .pillar::before {
   counter-increment: pil; content: "0" counter(pil);
   position: absolute; top: 1.2rem; right: 1.4rem;
-  font-family: var(--serif); font-size: 2.6rem; color: var(--bg-tint); font-weight: 600;
+  font-family: var(--num); font-size: 2.6rem; color: var(--bg-tint); font-weight: 600;
   transition: color 0.5s;
 }
 .pillar::after {
@@ -401,7 +404,7 @@ section { position: relative; }
   box-shadow: 0 0 0 4px rgba(0, 88, 168, 0.14); transform: scale(1.05); }
 .tl-item.lit:last-child::before { border-color: var(--green); background: var(--green);
   box-shadow: 0 0 0 4px rgba(0, 128, 64, 0.16); }
-.tl-item .yr { font-family: var(--serif); font-weight: 600; color: var(--green); font-size: 1.2rem; }
+.tl-item .yr { font-family: var(--num); font-weight: 600; color: var(--green); font-size: 1.2rem; }
 .tl-item h4 { margin: 0.2rem 0 0.2rem; font-size: 1.12rem; }
 .tl-item p { font-size: 0.95rem; margin: 0; }
 
@@ -416,14 +419,14 @@ section { position: relative; }
   width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center;
   margin-bottom: 1.3rem; background: linear-gradient(150deg, var(--blue), var(--green)); color: #fff;
 }
-.tm-initials { font-family: var(--serif); font-weight: 600; font-size: 1.9rem; letter-spacing: 0.02em; }
+.tm-initials { font-family: var(--display); font-weight: 600; font-size: 1.9rem; letter-spacing: 0.02em; }
 .tm-name { margin: 0 0 0.25rem; font-size: 1.4rem; }
 .tm-role { color: var(--green); font-weight: 600; font-size: 0.92rem; margin: 0 0 1rem; }
 .tm-bio { font-size: 0.95rem; margin: 0 0 1.3rem; }
 .tm-creds { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
 .tm-creds li { display: flex; gap: 0.7rem; font-size: 0.88rem; color: var(--body); }
 .tm-creds li b { color: var(--ink); }
-.tm-creds li .yr { font-family: var(--serif); font-weight: 600; color: var(--blue); flex: 0 0 auto; }
+.tm-creds li .yr { font-family: var(--num); font-weight: 600; color: var(--blue); flex: 0 0 auto; }
 
 /* empty placeholder slots */
 .team-card.is-empty {
@@ -480,7 +483,7 @@ section { position: relative; }
 .footer-brand p { font-size: 0.92rem; max-width: 280px; margin-top: 1rem; }
 .footer-bottom { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.85rem; }
-.footer-bottom .tag { font-family: var(--serif); font-style: italic; color: var(--green-soft); }
+.footer-bottom .tag { font-family: var(--display); font-style: italic; color: var(--green-soft); }
 
 /* ---------- scroll reveal ---------- */
 .reveal { opacity: 0; transform: translateY(34px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); will-change: opacity, transform; }
@@ -528,7 +531,7 @@ section { position: relative; }
 .ctrl:last-of-type { margin-bottom: 0; }
 .ctrl-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.7rem; gap: 1rem; }
 .ctrl-top label { font-weight: 600; color: var(--blue-ink); font-size: 0.96rem; }
-.ctrl-top output { font-family: var(--serif); font-weight: 600; color: var(--blue); font-size: 1.18rem; white-space: nowrap; }
+.ctrl-top output { font-family: var(--num); font-weight: 600; color: var(--blue); font-size: 1.18rem; white-space: nowrap; }
 .ctrl-scale { display: flex; justify-content: space-between; margin-top: 0.45rem; font-size: 0.72rem; color: var(--body); opacity: 0.7; }
 
 .ctrl input[type="range"] {
@@ -555,7 +558,7 @@ section { position: relative; }
 }
 .co { text-align: center; }
 .co-lbl { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--body); margin-bottom: 0.4rem; }
-.co-val { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(1.1rem, 2.3vw, 1.5rem); color: var(--ink); line-height: 1.1; }
+.co-val { display: block; font-family: var(--num); font-weight: 600; font-size: clamp(1.1rem, 2.3vw, 1.5rem); color: var(--ink); line-height: 1.1; }
 .co.is-grow .co-val { color: var(--blue); }
 .co.is-gain .co-val { color: var(--green); }
 .calc-note { margin: 1.2rem 0 0; font-size: 0.76rem; color: var(--body); opacity: 0.78; line-height: 1.5; }
@@ -604,7 +607,7 @@ section { position: relative; }
 .dc-suit svg { width: 190px; height: 190px; }
 .deck-card > *:not(.dc-suit):not(.dc-rank) { position: relative; z-index: 1; }
 .dc-rank {
-  position: absolute; z-index: 2; font-family: var(--serif); font-weight: 600; font-size: 1rem;
+  position: absolute; z-index: 2; font-family: var(--num); font-weight: 600; font-size: 1rem;
   color: var(--accent); letter-spacing: 0.02em;
 }
 .dc-rank.tl { top: 14px; left: 16px; }
@@ -702,7 +705,7 @@ section { position: relative; }
 /* ============================================================
    About page - unified typographic hierarchy + tactile cards.
    Scoped to .about so the rest of the site is untouched. Each
-   section leads with a large serif heading; the eyebrow is a quiet
+   section leads with a large display heading; the eyebrow is a quiet
    label above it and the descriptive line below is the smaller
    supporting "quote". (Locally reverses the global section-head flip.)
    ============================================================ */
@@ -725,12 +728,12 @@ section { position: relative; }
 .hero-center h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
 .about-hero .hero-lead { font-size: clamp(1.02rem, 1.5vw, 1.18rem); }
 
-/* Contact hero leads with its short label as the dominant serif heading; the
+/* Contact hero leads with its short label as the dominant display heading; the
    line beneath it is demoted to a quiet subhead (the page's own variation of
    the global section-head flip, at hero scale). */
 .contact .page-hero .eyebrow {
   display: block;
-  font-family: var(--serif); font-weight: 600;
+  font-family: var(--display); font-weight: 600;
   font-size: clamp(2.7rem, 6.6vw, 4.8rem); line-height: 1.08;
   letter-spacing: -0.01em; text-transform: none;
   color: var(--ink); margin-bottom: 0.6rem;
@@ -742,12 +745,12 @@ section { position: relative; }
   letter-spacing: 0; color: var(--body); margin-bottom: 0.75rem;
 }
 
-/* Service hero: the service name leads as the dominant serif heading; the
+/* Service hero: the service name leads as the dominant display heading; the
    tagline beneath drops to a small, body-sized quote and the description
    stays as quiet supporting text. Mirrors the contact hero treatment. */
 .svc-hero .eyebrow {
   display: block;
-  font-family: var(--serif); font-weight: 600;
+  font-family: var(--display); font-weight: 600;
   font-size: clamp(2.7rem, 6.6vw, 4.8rem); line-height: 1.06;
   letter-spacing: -0.01em; text-transform: none;
   color: var(--ink); margin-bottom: 0.7rem;
@@ -768,7 +771,7 @@ section { position: relative; }
 .about .split-body .eyebrow,
 .contact .split-body .eyebrow {
   display: block;
-  font-family: var(--serif); font-weight: 600;
+  font-family: var(--display); font-weight: 600;
   font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.08;
   letter-spacing: -0.01em; text-transform: none;
   color: var(--ink); margin-bottom: 0.5rem;
@@ -911,7 +914,7 @@ section { position: relative; }
 }
 .ws-greet { min-width: 0; }
 .ws-hello {
-  margin: 0; font-family: var(--serif); font-weight: 600;
+  margin: 0; font-family: var(--display); font-weight: 600;
   font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.1; color: var(--ink);
 }
 .ws-sub {
@@ -1050,7 +1053,7 @@ section { position: relative; }
   box-shadow: 0 8px 18px -10px rgba(0, 63, 125, 0.7);
 }
 .cw-ico svg { width: 22px; height: 22px; }
-.cw-title { flex: 1 1 auto; margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.18rem; color: var(--ink); }
+.cw-title { flex: 1 1 auto; margin: 0; font-family: var(--display); font-weight: 600; font-size: 1.18rem; color: var(--ink); }
 .cw-close {
   flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%;
   border: 1px solid var(--line); background: #fff; color: var(--body);
@@ -1091,12 +1094,12 @@ section { position: relative; }
 }
 .ctrl-field:focus-within { border-bottom-style: solid; border-bottom-color: var(--accent, var(--blue)); }
 .cf-pre, .cf-suf {
-  font-family: var(--serif); font-weight: 600; font-size: 1.18rem; line-height: 1.1;
+  font-family: var(--num); font-weight: 600; font-size: 1.18rem; line-height: 1.1;
   color: var(--accent, var(--blue));
 }
 .cf-suf { margin-left: 3px; font-size: 0.95rem; }
 .ctrl-val {
-  font-family: var(--serif); font-weight: 600; font-size: 1.18rem; line-height: 1.1;
+  font-family: var(--num); font-weight: 600; font-size: 1.18rem; line-height: 1.1;
   color: var(--accent, var(--blue)); background: transparent; border: 0; outline: none;
   text-align: right; width: 4ch; min-width: 2ch; padding: 0; cursor: text;
   -moz-appearance: textfield;
@@ -1131,7 +1134,7 @@ section { position: relative; }
 .cd-seg.cc-grow { stroke: var(--green); }
 .cd-seg.cc-warn { stroke: #e0894e; }
 .cd-seg.cc-alt  { stroke: var(--blue); }
-.cd-c1 { font-family: var(--serif); font-weight: 600; font-size: 4.6px; fill: var(--blue-ink); }
+.cd-c1 { font-family: var(--num); font-weight: 600; font-size: 4.6px; fill: var(--blue-ink); }
 .cd-c2 { font-family: var(--sans); font-weight: 700; font-size: 2.4px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--body); }
 /* legend (dot colours shared with the donut) */
 .cc-in   { background: #9db8d0; }
@@ -1145,12 +1148,12 @@ section { position: relative; }
 .cc-key { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
 .cc-dot { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
 .cc-lbl { flex: 1 1 auto; color: var(--body); }
-.cc-amt { font-family: var(--serif); font-weight: 600; color: var(--blue-ink); }
+.cc-amt { font-family: var(--num); font-weight: 600; color: var(--blue-ink); }
 .cc-pct { color: var(--body); opacity: 0.65; font-variant-numeric: tabular-nums; min-width: 2.6ch; text-align: right; }
 
 /* duration projection table */
 .cw-proj { margin-top: 1.5rem; padding-top: 1.3rem; border-top: 1px solid var(--line); }
-.cw-proj-head h4 { margin: 0 0 0.15rem; font-family: var(--serif); font-weight: 600; font-size: 1rem; color: var(--ink); }
+.cw-proj-head h4 { margin: 0 0 0.15rem; font-family: var(--display); font-weight: 600; font-size: 1rem; color: var(--ink); }
 .cw-proj-sub { margin: 0 0 0.8rem; font-size: 0.8rem; color: var(--body); line-height: 1.45; }
 .proj-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .proj-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
@@ -1158,7 +1161,7 @@ section { position: relative; }
 .proj-table thead th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--body); font-weight: 600; border-bottom: 1px solid var(--line); }
 .proj-table thead th:first-child, .proj-table tbody th { text-align: left; }
 .proj-table tbody th { font-weight: 500; color: var(--body); font-variant-numeric: tabular-nums; }
-.proj-table tbody td { font-family: var(--serif); font-weight: 600; color: var(--blue-ink); font-variant-numeric: tabular-nums; }
+.proj-table tbody td { font-family: var(--num); font-weight: 600; color: var(--blue-ink); font-variant-numeric: tabular-nums; }
 .proj-table tbody tr + tr th, .proj-table tbody tr + tr td { border-top: 1px solid var(--line); }
 .proj-table tbody tr.is-current { background: var(--bg-tint); }
 .proj-table tbody tr.is-current th { color: var(--accent, var(--blue)); font-weight: 700; }
