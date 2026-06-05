@@ -24,7 +24,7 @@
   const links = [
     ["Home", "index.html"],
     ["About", "about.html"],
-    ["Services", "index.html#services"],
+    ["Services", "services.html"],
     ["Calculators", "calculators.html"],
     ["Gallery", "gallery.html"],
     ["Contact", "contact.html"],
@@ -41,8 +41,8 @@
     .map(([label, href]) => {
       const target = href.split("#")[0];
       const isActive =
-        href === "index.html#services"
-          ? servicePages.includes(path)
+        href === "services.html"
+          ? path === "services.html" || servicePages.includes(path)
           : target === path;
       const active = isActive ? " active" : "";
       return `<a class="${active.trim()}" href="${href}">${label}</a>`;
@@ -63,7 +63,7 @@
   // Floating "back" pill: from a service page it returns to all services,
   // from the About page it returns to the homepage. Omitted elsewhere.
   const backFab = servicePages.includes(path)
-    ? `<a class="back-fab" href="index.html#services" aria-label="Back to all services"><span class="bf-arr" aria-hidden="true">&larr;</span> All services</a>`
+    ? `<a class="back-fab" href="services.html" aria-label="Back to all services"><span class="bf-arr" aria-hidden="true">&larr;</span> All services</a>`
     : path === "about.html"
     ? `<a class="back-fab" href="index.html" aria-label="Back to home"><span class="bf-arr" aria-hidden="true">&larr;</span> Home</a>`
     : "";
