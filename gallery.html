@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gallery · Lakhani Investment</title>
-  <meta name="description" content="Step inside the Lakhani Investment gallery: a curated exhibition of our work, our people, our offices and the moments that shape four decades of trust." />
+  <meta name="description" content="A scroll through the Lakhani Investment gallery: our work, our people, our offices and the moments that shape four decades of trust." />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,38 +14,51 @@
 <body class="gallery">
   <div id="nav-root"></div>
 
-  <!-- ENTRANCE -->
+  <!-- INTRO -->
   <section class="page-hero gallery-hero hero-center" data-fx-net>
     <div class="wrap reveal">
       <span class="eyebrow gallery-eyebrow">The collection · Est. 1987</span>
-      <h1>Step inside the gallery.</h1>
-      <p class="hero-lead">A curated walk through our work, our people and the places we call home. Wander at your own pace, the way you would a quiet gallery on a slow afternoon.</p>
-      <span class="gallery-cue" aria-hidden="true"><span class="gc-word">Scroll to enter</span><span class="gc-line"></span></span>
+      <h1 class="gallery-title"><span>The gallery,</span> <span>in motion.</span></h1>
+      <p class="hero-lead">A slow scroll through our work, our people and the places we call home. Move at your own pace, the way you would through a quiet gallery on a still afternoon.</p>
+      <span class="gallery-cue" aria-hidden="true"><span class="gc-word">Scroll to begin</span><span class="gc-line"></span></span>
     </div>
   </section>
 
-  <!-- THE LONG WALL: a horizontal walk past framed pieces -->
-  <section class="exhibit" id="exhibit" aria-label="The long wall, a horizontal gallery walk">
-    <div class="exhibit-sticky">
-      <div class="exhibit-head">
-        <span class="exhibit-room">Gallery I</span>
-        <span class="exhibit-name">The long wall</span>
+  <!-- THE JOURNEY: a pinned horizontal film strip -->
+  <section class="journey" id="journey" aria-label="The long wall, a horizontal gallery walk">
+    <div class="journey-sticky">
+      <div class="journey-head">
+        <span class="journey-room">Gallery I</span>
+        <span class="journey-name">The long wall</span>
       </div>
-      <div class="exhibit-viewport">
-        <div class="exhibit-track" id="exhibitTrack"><!-- frames injected by gallery.js --></div>
+      <div class="journey-viewport">
+        <div class="journey-track" id="journeyTrack"><!-- slides injected by gallery.js --></div>
       </div>
-      <div class="exhibit-foot">
-        <span class="exhibit-hint">Keep scrolling to move down the wall</span>
-        <span class="exhibit-bar" aria-hidden="true"><span class="exhibit-bar-fill" id="exhibitBar"></span></span>
+      <div class="journey-foot">
+        <span class="journey-hint">Keep scrolling to move along the wall</span>
+        <span class="journey-counter" id="journeyCounter"><b id="journeyNow">01</b> / <span id="journeyTotal">00</span></span>
+        <span class="journey-bar" aria-hidden="true"><span class="journey-bar-fill" id="journeyBar"></span></span>
       </div>
     </div>
+  </section>
+
+  <!-- IN FOCUS: full-bleed pieces that reveal as you scroll -->
+  <section class="section features" aria-label="In focus">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Gallery II</span>
+        <h2>In focus</h2>
+        <p class="lead">A few pieces, larger and slower. Each one settles into place as you arrive.</p>
+      </div>
+    </div>
+    <div class="feature-list" id="featureList"><!-- features injected by gallery.js --></div>
   </section>
 
   <!-- THE COLLECTION: a justified mosaic of everything, mixed -->
   <section class="section gallery-collection">
     <div class="wrap">
       <div class="section-head center reveal">
-        <span class="eyebrow">Gallery II</span>
+        <span class="eyebrow">Gallery III</span>
         <h2>The collection</h2>
         <p class="lead">Everything in one room, unsorted on purpose. Work and people, offices and milestones, side by side. Select any piece to view it up close.</p>
       </div>
