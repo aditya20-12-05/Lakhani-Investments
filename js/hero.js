@@ -15,6 +15,12 @@
     bar4: "0,102,58",    // #00663a
     blue: "0,88,168",    // #0058a8
   };
+  // Colours in a flat list + reusable buckets so the connecting lines can be
+  // batched by (colour, opacity level) and drawn in a few stroke() calls.
+  const COLORS = [C.bar1, C.bar2, C.bar3, C.bar4, C.blue];
+  const LINE_LEVELS = 4;
+  const lineBatch = [];
+  for (let i = 0; i < COLORS.length * LINE_LEVELS; i++) lineBatch.push([]);
 
   let W = 0, H = 0, DPR = 1, rect = null;
   let particles = [];
@@ -30,7 +36,7 @@
   // shed the heaviest work (the connecting-line pass) on devices that can't
   // sustain a smooth frame rate, so the interaction never feels laggy.
   let rafId = 0, onScreen = true, lite = false;
-  let lastTs = 0, frameEMA = 16, frameN = 0;
+  let lastTs = 0, frameEMA = 16, slowRun = 0;
 
   const smooth = (x) => x * x * (3 - 2 * x);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -80,10 +86,11 @@
     const TH = (scale * 5.2) ** 2;
     for (let i = 0; i < targets.length; i++) {
       let made = 0;
+      const ci = COLORS.indexOf(targets[i].color);
       for (let j = i + 1; j < targets.length && made < 3; j++) {
         if (targets[i].color !== targets[j].color) continue;
         const dx = targets[i].x - targets[j].x, dy = targets[i].y - targets[j].y;
-        if (dx * dx + dy * dy < TH) { pairs.push([i, j, targets[i].color]); made++; }
+        if (dx * dx + dy * dy < TH) { pairs.push([i, j, ci]); made++; }
       }
     }
     syncParticles();
@@ -157,20 +164,39 @@
     // connecting lines (logo wireframe): fade in with assembly.
     // Skipped entirely in lite mode — this is the most expensive pass.
     if (!lite && globalA > 0.05) {
-      ctx.lineWidth = 1;
-      for (const [i, j, col] of pairs) {
-        const a = particles[i], b = particles[j];
-        const ax = a.px, ay = a.py, bx = b.px, by = b.py;
-        if (ax === undefined) continue;
+      // Bucket segments by colour and a few opacity levels, then stroke each
+      // bucket once. This turns hundreds of individual stroke() calls into a
+      // handful, which is what keeps the wireframe from feeling laggy.
+      for (let b = 0; b < lineBatch.length; b++) lineBatch[b].length = 0;
+      const maxO = globalA * 0.5;
+      for (let k = 0; k < pairs.length; k++) {
+        const pr = pairs[k];
+        const a = particles[pr[0]], b = particles[pr[1]];
+        if (a.px === undefined) continue;
         // Only wire points once they are genuinely near their targets, so the
         // mesh appears as the clean logo forms, never as a tangle of long
         // lines while the particles are still scattered in transit.
-        const m = Math.min(a.a, b.a);
+        const m = a.a < b.a ? a.a : b.a;
         if (m < 0.6) continue;
-        const o = globalA * 0.5 * ((m - 0.6) / 0.4);
+        const o = maxO * ((m - 0.6) / 0.4);
         if (o < 0.02) continue;
-        ctx.strokeStyle = `rgba(${col}, ${o})`;
-        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        let lvl = Math.round((o / maxO) * LINE_LEVELS);
+        if (lvl < 1) lvl = 1; else if (lvl > LINE_LEVELS) lvl = LINE_LEVELS;
+        const arr = lineBatch[pr[2] * LINE_LEVELS + (lvl - 1)];
+        arr.push(a.px, a.py, b.px, b.py);
+      }
+      ctx.lineWidth = 1;
+      for (let ci = 0; ci < COLORS.length; ci++) {
+        for (let lvl = 1; lvl <= LINE_LEVELS; lvl++) {
+          const arr = lineBatch[ci * LINE_LEVELS + (lvl - 1)];
+          if (!arr.length) continue;
+          ctx.strokeStyle = `rgba(${COLORS[ci]}, ${(maxO * lvl / LINE_LEVELS).toFixed(3)})`;
+          ctx.beginPath();
+          for (let s = 0; s < arr.length; s += 4) {
+            ctx.moveTo(arr[s], arr[s + 1]); ctx.lineTo(arr[s + 2], arr[s + 3]);
+          }
+          ctx.stroke();
+        }
       }
     }
 
@@ -210,9 +236,20 @@
   function loop(ts) {
     if (!running || !onScreen) { rafId = 0; return; }
     if (lastTs) {
-      frameEMA += (ts - lastTs - frameEMA) * 0.1;
-      // After a brief warm-up, if we're stuck below ~36fps, drop to lite mode.
-      if (!lite && ++frameN > 40 && frameEMA > 28) lite = true;
+      const dt = ts - lastTs;
+      // Ignore one-off stalls (tab switch, GC, scroll jank). A single spike must
+      // never skew the average and permanently strip the wireframe, which was
+      // the cause of the lines showing up only on some page loads.
+      if (dt < 120) {
+        frameEMA += (dt - frameEMA) * 0.1;
+        // Only judge performance once the intro has settled and load-time work
+        // has cleared, and require sustained slowness (not one bad frame) before
+        // shedding the lines, so the mesh renders consistently on capable devices.
+        if (!lite && performance.now() > introUntil + 800) {
+          if (frameEMA > 32) { if (++slowRun > 45) lite = true; }
+          else slowRun = 0;
+        }
+      }
     }
     lastTs = ts;
     draw();
