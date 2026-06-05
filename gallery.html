@@ -4,77 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gallery · Lakhani Investment</title>
-  <meta name="description" content="A scroll through the Lakhani Investment gallery: our work, our people, our offices and the moments that shape four decades of trust." />
+  <meta name="description" content="The Lakhani Investment gallery, arranged like a streaming library: our people, our offices, our work and the moments that shape four decades of trust. Browse by collection." />
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="gallery">
+<body class="gallery gallery-flix">
   <div id="nav-root"></div>
 
-  <!-- INTRO -->
-  <section class="page-hero gallery-hero hero-center" data-fx-net>
-    <div class="wrap reveal">
-      <span class="eyebrow gallery-eyebrow">The collection · Est. 1987</span>
-      <h1 class="gallery-title"><span>The gallery,</span> <span>in motion.</span></h1>
-      <p class="hero-lead">A slow scroll through our work, our people and the places we call home. Move at your own pace, the way you would through a quiet gallery on a still afternoon.</p>
-      <span class="gallery-cue" aria-hidden="true"><span class="gc-word">Scroll to begin</span><span class="gc-line"></span></span>
+  <!-- BILLBOARD: a featured "show" up top -->
+  <section class="bb" id="billboard" aria-label="Featured collection">
+    <div class="bb-art">
+      <img class="bb-img" id="bbImg" alt="" decoding="async" />
     </div>
-  </section>
-
-  <!-- THE JOURNEY: a pinned horizontal film strip -->
-  <section class="journey" id="journey" aria-label="The long wall, a horizontal gallery walk">
-    <div class="journey-sticky">
-      <div class="journey-head">
-        <span class="journey-room">Gallery I</span>
-        <span class="journey-name">The long wall</span>
-      </div>
-      <div class="journey-viewport">
-        <div class="journey-track" id="journeyTrack"><!-- slides injected by gallery.js --></div>
-      </div>
-      <div class="journey-foot">
-        <span class="journey-hint">Keep scrolling to move along the wall</span>
-        <span class="journey-counter" id="journeyCounter"><b id="journeyNow">01</b> / <span id="journeyTotal">00</span></span>
-        <span class="journey-bar" aria-hidden="true"><span class="journey-bar-fill" id="journeyBar"></span></span>
+    <div class="bb-scrim" aria-hidden="true"></div>
+    <div class="bb-scrim-bottom" aria-hidden="true"></div>
+    <div class="bb-inner wrap">
+      <span class="bb-badge"><span class="bb-mark">LI</span> Collection</span>
+      <h1 class="bb-title" id="bbTitle">The collection</h1>
+      <p class="bb-overview" id="bbOverview"></p>
+      <div class="bb-meta" id="bbMeta"></div>
+      <div class="bb-actions">
+        <button class="bb-btn bb-play" id="bbPlay" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Play
+        </button>
+        <button class="bb-btn bb-info" id="bbInfo" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg> More info
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- IN FOCUS: full-bleed pieces that reveal as you scroll -->
-  <section class="section features" aria-label="In focus">
-    <div class="wrap">
-      <div class="section-head center reveal">
-        <span class="eyebrow">Gallery II</span>
-        <h2>In focus</h2>
-        <p class="lead">A few pieces, larger and slower. Each one settles into place as you arrive.</p>
-      </div>
-    </div>
-    <div class="feature-list" id="featureList"><!-- features injected by gallery.js --></div>
-  </section>
+  <!-- ROWS: one row per "show" (category), injected by gallery.js -->
+  <main class="rows" id="rows" aria-label="Browse collections"></main>
 
-  <!-- THE COLLECTION: a justified mosaic of everything, mixed -->
-  <section class="section gallery-collection">
-    <div class="wrap">
-      <div class="section-head center reveal">
-        <span class="eyebrow">Gallery III</span>
-        <h2>The collection</h2>
-        <p class="lead">Everything in one room, unsorted on purpose. Work and people, offices and milestones, side by side. Select any piece to view it up close.</p>
-      </div>
-      <div class="mosaic" id="mosaic"><!-- pieces injected by gallery.js --></div>
-      <p class="gallery-disclaimer reveal">Images shown are placeholders while our own photography is prepared.</p>
-    </div>
-  </section>
-
-  <!-- CLOSING -->
-  <section class="section ink-bg cta-band" data-fx-net data-fx-dark>
-    <div class="wrap reveal">
-      <h2>The door stays open.</h2>
-      <p>Pictures only say so much. Come and meet the people behind them.</p>
-      <a class="btn btn--white" href="contact.html#talk">Start a conversation <span class="arr">→</span></a>
-    </div>
-  </section>
+  <p class="flix-note">Images shown are placeholders while our own photography is prepared.</p>
 
   <div id="footer-root"></div>
   <script src="js/components.js"></script>
