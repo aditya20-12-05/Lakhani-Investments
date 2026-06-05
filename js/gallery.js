@@ -1,14 +1,15 @@
 /* Gallery, streaming-library interface.
-   Each "show" is a category; each "episode" is a photo. A featured
-   billboard sits up top, then horizontal rows of episode cards.
-   Clicking a show opens a title modal with an episode list; clicking
-   an episode opens a fullscreen viewer. Vanilla JS, no dependencies. */
+   A welcoming billboard carousel rotates through collections at the
+   top, then the page shows every collection as a poster ("show").
+   Episodes live inside a show: opening a collection reveals its
+   description and episode list; playing an episode opens a fullscreen
+   viewer. Vanilla JS, no dependencies. */
 (function () {
   "use strict";
 
-  const rows = document.getElementById("rows");
   const bb = document.getElementById("billboard");
-  if (!rows || !bb) return;
+  const shelfGrid = document.getElementById("shelfGrid");
+  if (!bb || !shelfGrid) return;
 
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const photo = (seed, w, h) =>
@@ -19,6 +20,10 @@
     if (img.complete && img.naturalWidth) mark();
     else img.addEventListener("load", mark, { once: true });
   };
+  const esc = (str) =>
+    String(str).replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
 
   // icons
   const icoPlay = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
@@ -95,119 +100,149 @@
       ],
     },
   ];
-  const FEATURED = 1;
 
-  function esc(str) {
-    return String(str).replace(/[&<>"']/g, (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-    );
+  // ===========================================================
+  //  Billboard carousel
+  // ===========================================================
+  const imgA = document.getElementById("bbImgA");
+  const imgB = document.getElementById("bbImgB");
+  const bbKicker = document.getElementById("bbKicker");
+  const bbTitle = document.getElementById("bbTitle");
+  const bbOverview = document.getElementById("bbOverview");
+  const bbMeta = document.getElementById("bbMeta");
+  const bbCopy = document.getElementById("bbCopy");
+  const bbDots = document.getElementById("bbDots");
+  const bbPrev = document.getElementById("bbPrev");
+  const bbNext = document.getElementById("bbNext");
+  const bbPlay = document.getElementById("bbPlay");
+  const bbInfo = document.getElementById("bbInfo");
+
+  let current = 0;
+  let frontImg = imgB; // first setSlide loads into imgA and shows it
+  let timer = null;
+  let hovering = false;
+
+  function buildDots() {
+    bbDots.innerHTML = "";
+    SHOWS.forEach((s, i) => {
+      const d = document.createElement("button");
+      d.type = "button";
+      d.className = "bb-dot";
+      d.setAttribute("role", "tab");
+      d.setAttribute("aria-label", s.title);
+      d.addEventListener("click", () => goTo(i));
+      bbDots.appendChild(d);
+    });
   }
 
-  // ===========================================================
-  //  Billboard
-  // ===========================================================
-  function setBillboard() {
-    const s = SHOWS[FEATURED];
-    const bbImg = document.getElementById("bbImg");
-    bbImg.src = photo(s.backdropSeed, 1600, 900);
-    bbImg.alt = s.title;
-    fadeIn(bbImg);
-    document.getElementById("bbTitle").textContent = s.title;
-    document.getElementById("bbOverview").textContent = s.synopsis;
-    document.getElementById("bbMeta").textContent = [
+  function setSlide(i) {
+    current = (i + SHOWS.length) % SHOWS.length;
+    const s = SHOWS[current];
+    bbKicker.textContent = s.kicker;
+    bbTitle.textContent = s.title;
+    bbOverview.textContent = s.synopsis;
+    bbMeta.textContent = [
       s.metaYear,
       s.episodes.length + " episodes",
       "Lakhani Investment",
     ].join("  ·  ");
-    document.getElementById("bbPlay").addEventListener("click", () =>
-      openViewer(FEATURED, 0)
-    );
-    document.getElementById("bbInfo").addEventListener("click", () =>
-      openModal(FEATURED)
-    );
-  }
 
-  // ===========================================================
-  //  Rows of shows
-  // ===========================================================
-  function renderRows() {
-    const html = SHOWS.map((s, si) => {
-      const cards = s.episodes
-        .map((ep, ei) => {
-          return `
-            <button class="ep" data-show="${si}" data-ep="${ei}" type="button"
-                    aria-label="Play: ${esc(ep.title)}">
-              <span class="ep-thumb">
-                <img class="ep-img" src="${photo(ep.seed, 640, 360)}" alt="" loading="lazy" decoding="async" />
-                <span class="ep-grad" aria-hidden="true"></span>
-                <span class="ep-badge">E${ei + 1}</span>
-                <span class="ep-play" aria-hidden="true">${icoPlay}</span>
-                <span class="ep-cap">
-                  <span class="ep-title">${esc(ep.title)}</span>
-                  ${ep.year ? `<span class="ep-sub">${esc(ep.year)}</span>` : ""}
-                </span>
-              </span>
-            </button>`;
-        })
-        .join("");
-      return `
-        <section class="row reveal">
-          <div class="row-head">
-            <button class="row-title" data-show="${si}" type="button"
-                    aria-label="More about ${esc(s.title)}">
-              <span class="rt-kicker">${esc(s.kicker)}</span>
-              <span class="rt-name">${esc(s.title)} <span class="rt-go" aria-hidden="true">Open ›</span></span>
-            </button>
-            <span class="row-count">${s.episodes.length} episodes</span>
-          </div>
-          <div class="row-rail">
-            <button class="rail-arr rail-prev" type="button" aria-label="Scroll left" disabled>${icoPrev}</button>
-            <div class="rail-track">${cards}</div>
-            <button class="rail-arr rail-next" type="button" aria-label="Scroll right">${icoNext}</button>
-          </div>
-        </section>`;
-    }).join("");
-    rows.innerHTML = html;
+    [...bbDots.children].forEach((d, idx) => {
+      const on = idx === current;
+      d.classList.toggle("is-active", on);
+      d.setAttribute("aria-selected", on ? "true" : "false");
+    });
 
-    rows.querySelectorAll(".ep-img").forEach(fadeIn);
-    rows.querySelectorAll(".row-rail").forEach(wireRail);
-  }
-
-  function wireRail(rail) {
-    const track = rail.querySelector(".rail-track");
-    const prev = rail.querySelector(".rail-prev");
-    const next = rail.querySelector(".rail-next");
-    const step = () => Math.max(track.clientWidth * 0.82, 240);
-    prev.addEventListener("click", () =>
-      track.scrollBy({ left: -step(), behavior: reduce ? "auto" : "smooth" })
-    );
-    next.addEventListener("click", () =>
-      track.scrollBy({ left: step(), behavior: reduce ? "auto" : "smooth" })
-    );
-    const update = () => {
-      const max = track.scrollWidth - track.clientWidth;
-      prev.disabled = track.scrollLeft <= 2;
-      next.disabled = track.scrollLeft >= max - 2 || max <= 2;
+    // crossfade backdrop
+    const back = frontImg === imgA ? imgB : imgA;
+    back.src = photo(s.backdropSeed, 1600, 900);
+    back.alt = s.title;
+    const reveal = () => {
+      back.classList.add("is-active");
+      frontImg.classList.remove("is-active");
+      frontImg = back;
     };
-    track.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    update();
+    if (back.complete && back.naturalWidth) reveal();
+    else back.addEventListener("load", reveal, { once: true });
+
+    // re-trigger copy animation
+    bbCopy.classList.remove("is-in");
+    void bbCopy.offsetWidth;
+    bbCopy.classList.add("is-in");
   }
 
-  // delegated clicks for cards + row titles
-  rows.addEventListener("click", (e) => {
-    const ep = e.target.closest(".ep");
-    if (ep) {
-      openViewer(+ep.dataset.show, +ep.dataset.ep);
-      return;
-    }
-    const rt = e.target.closest(".row-title");
-    if (rt) openModal(+rt.dataset.show);
-  });
+  function go(dir) { goTo(current + dir); }
+  function goTo(i) { setSlide(i); restart(); }
 
-  // reveal rows on scroll (own observer; main.js does not see injected nodes)
-  function revealRows() {
-    const items = rows.querySelectorAll(".row");
+  function autoOk() {
+    return !reduce && !hovering && !document.hidden &&
+      !document.body.classList.contains("modal-open");
+  }
+  function start() {
+    if (reduce) return;
+    stop();
+    timer = setInterval(() => { if (autoOk()) setSlide(current + 1); }, 6500);
+  }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function restart() { stop(); start(); }
+
+  function initCarousel() {
+    buildDots();
+    setSlide(0);
+    bbPrev.addEventListener("click", () => go(-1));
+    bbNext.addEventListener("click", () => go(1));
+    bbPlay.addEventListener("click", () => openViewer(current, 0));
+    bbInfo.addEventListener("click", () => openModal(current));
+
+    bb.addEventListener("mouseenter", () => { hovering = true; });
+    bb.addEventListener("mouseleave", () => { hovering = false; });
+    bb.addEventListener("focusin", () => { hovering = true; });
+    bb.addEventListener("focusout", () => { hovering = false; });
+
+    // swipe (touch)
+    let x0 = null;
+    bb.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    bb.addEventListener("touchend", (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+      x0 = null;
+    }, { passive: true });
+
+    start();
+  }
+
+  // ===========================================================
+  //  Shelf: collections as posters
+  // ===========================================================
+  function renderShelf() {
+    const count = document.getElementById("shelfCount");
+    if (count) count.textContent = SHOWS.length + " collections";
+    shelfGrid.innerHTML = SHOWS.map((s, i) => `
+      <button class="show-card reveal" data-show="${i}" type="button"
+              aria-label="Open collection: ${esc(s.title)}">
+        <span class="sc-thumb">
+          <img class="sc-img" src="${photo(s.backdropSeed, 800, 450)}" alt="" loading="lazy" decoding="async" />
+          <span class="sc-grad" aria-hidden="true"></span>
+          <span class="sc-cta" aria-hidden="true">View collection ›</span>
+          <span class="sc-body">
+            <span class="sc-kicker">${esc(s.kicker)}</span>
+            <span class="sc-name">${esc(s.title)}</span>
+            <span class="sc-meta">${s.episodes.length} episodes</span>
+          </span>
+        </span>
+      </button>`).join("");
+
+    shelfGrid.querySelectorAll(".sc-img").forEach(fadeIn);
+    shelfGrid.addEventListener("click", (e) => {
+      const card = e.target.closest(".show-card");
+      if (card) openModal(+card.dataset.show);
+    });
+    revealCards();
+  }
+
+  function revealCards() {
+    const items = shelfGrid.querySelectorAll(".show-card");
     if (reduce || !("IntersectionObserver" in window)) {
       items.forEach((el) => el.classList.add("in"));
       return;
@@ -227,7 +262,7 @@
   }
 
   // ===========================================================
-  //  Title (show) modal
+  //  Title (show) modal: description + episode list
   // ===========================================================
   let smodal, smBack, smKicker, smTitle, smPlay, smMeta, smSynopsis, smList,
     smEpsShow, lastFocus;
@@ -307,8 +342,7 @@
     smPlay.onclick = () => openViewer(si, 0);
 
     smList.innerHTML = s.episodes
-      .map((ep, ei) => {
-        return `
+      .map((ep, ei) => `
           <li class="eitem" data-show="${si}" data-ep="${ei}" tabindex="0" role="button"
               aria-label="Play episode ${ei + 1}: ${esc(ep.title)}">
             <span class="ei-no">${pad2(ei + 1)}</span>
@@ -323,8 +357,7 @@
               </span>
               <span class="ei-note">${esc(ep.note)}</span>
             </span>
-          </li>`;
-      })
+          </li>`)
       .join("");
 
     lastFocus = document.activeElement;
@@ -411,9 +444,7 @@
     lbCount.textContent = "Episode " + (ei + 1) + " of " + total;
   }
 
-  function stepEp(dir) {
-    showEp(curShow, curEp + dir);
-  }
+  function stepEp(dir) { showEp(curShow, curEp + dir); }
 
   function openViewer(si, ei) {
     if (!lb) buildViewer();
@@ -446,7 +477,6 @@
   // ===========================================================
   //  Boot
   // ===========================================================
-  setBillboard();
-  renderRows();
-  revealRows();
+  initCarousel();
+  renderShelf();
 })();

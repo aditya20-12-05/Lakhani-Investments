@@ -14,18 +14,35 @@
 <body class="gallery gallery-flix">
   <div id="nav-root"></div>
 
-  <!-- BILLBOARD: a featured "show" up top -->
-  <section class="bb" id="billboard" aria-label="Featured collection">
+  <!-- BILLBOARD: a welcoming carousel that rotates through collections -->
+  <section class="bb" id="billboard" aria-label="Welcome to our gallery" aria-roledescription="carousel">
     <div class="bb-art">
-      <img class="bb-img" id="bbImg" alt="" decoding="async" />
+      <img class="bb-img" id="bbImgA" alt="" decoding="async" />
+      <img class="bb-img" id="bbImgB" alt="" decoding="async" />
     </div>
     <div class="bb-scrim" aria-hidden="true"></div>
     <div class="bb-scrim-bottom" aria-hidden="true"></div>
+
+    <button class="bb-arrow bb-prev" id="bbPrev" type="button" aria-label="Previous collection">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button class="bb-arrow bb-next" id="bbNext" type="button" aria-label="Next collection">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+
     <div class="bb-inner wrap">
-      <span class="bb-badge"><span class="bb-mark">LI</span> Collection</span>
-      <h1 class="bb-title" id="bbTitle">The collection</h1>
-      <p class="bb-overview" id="bbOverview"></p>
-      <div class="bb-meta" id="bbMeta"></div>
+      <p class="bb-welcome">
+        <span class="bb-mark">LI</span>
+        <span class="bb-welcome-text" aria-label="Welcome to our gallery">
+          <span>Welcome</span> <span>to</span> <span>our</span> <span>gallery</span>
+        </span>
+      </p>
+      <div class="bb-copy is-in" id="bbCopy">
+        <span class="bb-kicker" id="bbKicker"></span>
+        <h1 class="bb-title" id="bbTitle">The collection</h1>
+        <p class="bb-overview" id="bbOverview"></p>
+        <div class="bb-meta" id="bbMeta"></div>
+      </div>
       <div class="bb-actions">
         <button class="bb-btn bb-play" id="bbPlay" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Play
@@ -34,11 +51,18 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg> More info
         </button>
       </div>
+      <div class="bb-dots" id="bbDots" role="tablist" aria-label="Choose a collection"></div>
     </div>
   </section>
 
-  <!-- ROWS: one row per "show" (category), injected by gallery.js -->
-  <main class="rows" id="rows" aria-label="Browse collections"></main>
+  <!-- SHELF: every collection as a poster; episodes live inside each show -->
+  <main class="shelf" aria-label="All collections">
+    <div class="shelf-head">
+      <h2 class="shelf-title">All collections</h2>
+      <span class="shelf-count" id="shelfCount"></span>
+    </div>
+    <div class="shelf-grid" id="shelfGrid"></div>
+  </main>
 
   <p class="flix-note">Images shown are placeholders while our own photography is prepared.</p>
 
