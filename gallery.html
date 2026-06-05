@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery · Lakhani Investment</title>
+  <meta name="description" content="Step inside the Lakhani Investment gallery: a curated exhibition of our work, our people, our offices and the moments that shape four decades of trust." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="gallery">
+  <div id="nav-root"></div>
+
+  <!-- ENTRANCE -->
+  <section class="page-hero gallery-hero hero-center" data-fx-net>
+    <div class="wrap reveal">
+      <span class="eyebrow gallery-eyebrow">The collection · Est. 1987</span>
+      <h1>Step inside the gallery.</h1>
+      <p class="hero-lead">A curated walk through our work, our people and the places we call home. Wander at your own pace, the way you would a quiet gallery on a slow afternoon.</p>
+      <span class="gallery-cue" aria-hidden="true"><span class="gc-word">Scroll to enter</span><span class="gc-line"></span></span>
+    </div>
+  </section>
+
+  <!-- THE LONG WALL: a horizontal walk past framed pieces -->
+  <section class="exhibit" id="exhibit" aria-label="The long wall, a horizontal gallery walk">
+    <div class="exhibit-sticky">
+      <div class="exhibit-head">
+        <span class="exhibit-room">Gallery I</span>
+        <span class="exhibit-name">The long wall</span>
+      </div>
+      <div class="exhibit-viewport">
+        <div class="exhibit-track" id="exhibitTrack"><!-- frames injected by gallery.js --></div>
+      </div>
+      <div class="exhibit-foot">
+        <span class="exhibit-hint">Keep scrolling to move down the wall</span>
+        <span class="exhibit-bar" aria-hidden="true"><span class="exhibit-bar-fill" id="exhibitBar"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE COLLECTION: a justified mosaic of everything, mixed -->
+  <section class="section gallery-collection">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Gallery II</span>
+        <h2>The collection</h2>
+        <p class="lead">Everything in one room, unsorted on purpose. Work and people, offices and milestones, side by side. Select any piece to view it up close.</p>
+      </div>
+      <div class="mosaic" id="mosaic"><!-- pieces injected by gallery.js --></div>
+      <p class="gallery-disclaimer reveal">Images shown are placeholders while our own photography is prepared.</p>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="section ink-bg cta-band" data-fx-net data-fx-dark>
+    <div class="wrap reveal">
+      <h2>The door stays open.</h2>
+      <p>Pictures only say so much. Come and meet the people behind them.</p>
+      <a class="btn btn--white" href="contact.html#talk">Start a conversation <span class="arr">→</span></a>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/fx.js"></script>
+  <script src="js/gallery.js"></script>
+</body>
+</html>

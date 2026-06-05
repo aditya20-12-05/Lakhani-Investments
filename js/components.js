@@ -26,6 +26,7 @@
     ["About", "about.html"],
     ["Services", "index.html#services"],
     ["Calculators", "calculators.html"],
+    ["Gallery", "gallery.html"],
     ["Contact", "contact.html"],
   ];
 
@@ -87,6 +88,7 @@
           <a href="about.html#team">Our team</a>
           <a href="about.html#approach">Our approach</a>
           <a href="calculators.html">Calculators</a>
+          <a href="gallery.html">Gallery</a>
           <a href="contact.html">Contact</a>
         </div>
         <div>
