@@ -84,7 +84,7 @@
         <div>
           <h5>Company</h5>
           <a href="about.html">About us</a>
-          <a href="about.html#leadership">Leadership</a>
+          <a href="about.html#team">Our team</a>
           <a href="about.html#approach">Our approach</a>
           <a href="calculators.html">Calculators</a>
           <a href="contact.html">Contact</a>

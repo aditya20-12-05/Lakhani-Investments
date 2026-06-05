@@ -7,6 +7,14 @@
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Touch devices have no hover, so the "move the cursor to reveal it" gesture
+  // cannot happen. On those devices keep the mark gently formed and drop the
+  // cursor hint, so mobile visitors see the brand at once, not scattered dust.
+  const coarse = matchMedia("(hover: none)").matches;
+  if (coarse) {
+    const hint = document.querySelector(".intro-hint");
+    if (hint) hint.remove();
+  }
 
   const C = {
     bar1: "141,181,160", // #8db5a0
@@ -148,6 +156,9 @@
     let aTarget;
     if (performance.now() < introUntil) {
       aTarget = 1;
+    } else if (coarse) {
+      // touch devices: hold the mark formed (no hover to reveal it), breathing softly
+      aTarget = 0.9 + 0.1 * (0.5 + 0.5 * Math.sin(t * 0.9));
     } else if (pointer.active) {
       const d = Math.hypot(pointer.x - cx, pointer.y - cy);
       const maxR = Math.min(W, H) * 0.62;

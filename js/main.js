@@ -3,7 +3,13 @@
   const header = document.getElementById("siteHeader");
   const progress = document.getElementById("progress");
 
-  function onScroll() {
+  // Parallax targets collected once. Header tint, progress bar and parallax all
+  // run in a single rAF-throttled pass per frame instead of three separate
+  // layout reads on every scroll event.
+  const px = document.querySelectorAll("[data-parallax]");
+  const doParallax = px.length && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function onScrollFrame() {
     const y = window.scrollY;
     if (header) header.classList.toggle("scrolled", y > 30);
     if (progress) {
@@ -11,9 +17,28 @@
       const max = h.scrollHeight - h.clientHeight;
       progress.style.width = (max > 0 ? (y / max) * 100 : 0) + "%";
     }
+    if (doParallax) {
+      const vh = window.innerHeight;
+      px.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const mid = r.top + r.height / 2 - vh / 2;
+        const speed = parseFloat(el.dataset.parallax) || 0.08;
+        el.style.transform = `translateY(${(-mid * speed).toFixed(1)}px)`;
+      });
+    }
   }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+
+  let ticking = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { onScrollFrame(); ticking = false; });
+    },
+    { passive: true }
+  );
+  onScrollFrame();
 
   // reveal on scroll
   const reveals = document.querySelectorAll(".reveal, .reveal-x");
@@ -70,21 +95,4 @@
     counters.forEach((c) => (c.textContent = c.dataset.count));
   }
 
-  // subtle parallax for elements with data-parallax
-  const px = document.querySelectorAll("[data-parallax]");
-  if (px.length && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    window.addEventListener(
-      "scroll",
-      () => {
-        const vh = window.innerHeight;
-        px.forEach((el) => {
-          const r = el.getBoundingClientRect();
-          const mid = r.top + r.height / 2 - vh / 2;
-          const speed = parseFloat(el.dataset.parallax) || 0.08;
-          el.style.transform = `translateY(${(-mid * speed).toFixed(1)}px)`;
-        });
-      },
-      { passive: true }
-    );
-  }
 })();

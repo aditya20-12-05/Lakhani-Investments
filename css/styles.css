@@ -109,7 +109,6 @@ img { max-width: 100%; display: block; }
   border-color: rgba(0,88,168,0.28); box-shadow: none;
 }
 .btn--ghost:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
-.btn--green { --bg: var(--green); }
 .btn--white { --bg: #fff; color: var(--blue); border-color: #fff; }
 
 /* ---------- header / nav ---------- */
@@ -162,42 +161,20 @@ body.menu-open .nav-toggle span { background: transparent; }
 body.menu-open .nav-toggle span::before { top: 0; transform: rotate(45deg); }
 body.menu-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
 
-/* ---------- hero ---------- */
-.hero {
-  position: relative;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  padding: 120px 0 70px;
-  overflow: hidden;
-  background:
-    radial-gradient(1100px 620px at 78% 18%, rgba(0,88,168,0.08), transparent 60%),
-    radial-gradient(900px 560px at 12% 88%, rgba(0,128,64,0.09), transparent 60%),
-    var(--bg);
-}
-#hero-canvas {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  z-index: 1; cursor: crosshair;
-}
-.hero .wrap { position: relative; z-index: 3; pointer-events: none; }
+/* ---------- hero message typography (home hero-content) ---------- */
 .hero-inner { max-width: 760px; }
 .hero-inner > * { pointer-events: auto; }
-.hero h1, .hero-content h1 {
+.hero-content h1 {
   font-size: clamp(2.7rem, 7vw, 5.4rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
 }
-.hero h1 .grad, .hero-content h1 .grad {
+.hero-content h1 .grad {
   background: linear-gradient(100deg, var(--blue) 0%, var(--green) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.hero .tagline, .hero-content .tagline {
-  font-family: var(--serif); font-style: italic; font-weight: 500;
-  color: var(--green); font-size: clamp(1.1rem, 2.4vw, 1.55rem);
-  margin-bottom: 1.4rem;
-}
-.hero .sub, .hero-content .sub { font-size: 1.15rem; max-width: 540px; margin-bottom: 1.9rem; }
+.hero-content .sub { font-size: 1.15rem; max-width: 540px; margin-bottom: 1.9rem; }
 /* centered hero variant */
 .hero-inner.center { margin-inline: auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
 .hero-inner.center .sub { margin-left: auto; margin-right: auto; }
@@ -243,29 +220,6 @@ body.menu-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
           mask: radial-gradient(circle, transparent 58%, #000 60%, #000 72%, transparent 74%);
 }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-bottom: 2.6rem; }
-
-/* chips */
-.chips-label {
-  font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--body); font-weight: 600; margin-bottom: 0.8rem; opacity: 0.8;
-}
-.chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.chip {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.55rem 1.05rem; border-radius: 999px;
-  background: rgba(255,255,255,0.7);
-  border: 1.5px solid var(--line);
-  font-family: var(--sans); font-weight: 500; font-size: 0.92rem;
-  color: var(--blue-ink); cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: transform 0.3s var(--ease), border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
-}
-.chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); transition: transform 0.3s var(--ease); }
-.chip:hover {
-  transform: translateY(-3px); color: var(--blue); border-color: var(--blue);
-  background: #fff; box-shadow: var(--shadow-soft);
-}
-.chip:hover .dot { transform: scale(1.5); }
 
 .scroll-cue {
   position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
@@ -413,20 +367,6 @@ section { position: relative; }
 
 /* ---------- split feature ---------- */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
-.split.flip .split-media { order: 2; }
-.feature-card {
-  position: relative; border-radius: var(--radius); overflow: hidden;
-  background: linear-gradient(150deg, #06121f, #0a2138); color: #fff;
-  padding: 2.6rem; box-shadow: var(--shadow); min-height: 340px;
-  display: flex; flex-direction: column; justify-content: flex-end;
-}
-.feature-card .fc-ring {
-  position: absolute; width: 320px; height: 320px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.12); top: -120px; right: -90px;
-}
-.feature-card .fc-ring.two { width: 220px; height: 220px; top: -70px; right: -40px; border-color: rgba(0,128,64,0.4); }
-.feature-card .quote { font-family: var(--serif); font-size: 1.5rem; line-height: 1.4; color: #fff; }
-.feature-card .by { margin-top: 1rem; font-size: 0.9rem; color: #8fb3cf; }
 
 /* ---------- CTA band ---------- */
 .cta-band { text-align: center; }
@@ -440,7 +380,6 @@ section { position: relative; }
     radial-gradient(700px 420px at 8% 120%, rgba(0,128,64,0.08), transparent 60%), var(--bg); }
 .page-hero h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); }
 .page-hero p { font-size: 1.18rem; max-width: 620px; }
-.page-hero .chips { margin-top: 1.6rem; }
 
 /* ---------- timeline ---------- */
 .timeline { position: relative; margin-top: 1rem; padding-left: 28px; }
@@ -489,6 +428,7 @@ section { position: relative; }
 /* empty placeholder slots */
 .team-card.is-empty {
   border-style: dashed; background: var(--bg-tint); box-shadow: none; min-height: 220px;
+  align-self: start;
   display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
 }
 .team-card.is-empty:hover { transform: none; box-shadow: none; }
@@ -568,7 +508,6 @@ section { position: relative; }
 }
 .fx-spot:hover .fx-glow { opacity: 1; }
 .svc.is-green { --fx-glow: rgba(0, 128, 64, 0.13); }
-.feature-card { --fx-glow: rgba(127, 195, 160, 0.16); }
 .crow { --fx-glow: rgba(0, 88, 168, 0.10); }
 
 /* particle-network canvas backgrounds */
@@ -727,45 +666,10 @@ section { position: relative; }
   .dc-draw { opacity: 1; transform: none; }
 }
 
-/* ---------- stylised Gujarat map (Contact) ---------- */
-.gj-map { max-width: 540px; margin: 0 auto 3.2rem; }
-.gj-map svg { display: block; width: 100%; height: auto; overflow: visible; }
-.gj-land {
-  fill: url(#gjFill); stroke: rgba(0, 88, 168, 0.4);
-  stroke-width: 1.5; stroke-linejoin: round;
-}
-.gj-link {
-  stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round;
-  stroke-dasharray: 0.014 0.03; opacity: 0.5;
-}
-.gj-core { fill: var(--blue); }
-.gj-pin.is-green .gj-core { fill: var(--green); }
-.gj-pulse {
-  fill: var(--blue); transform-box: fill-box; transform-origin: center;
-  animation: gjPulse 2.8s var(--ease) infinite;
-}
-.gj-pin.is-green .gj-pulse { fill: var(--green); }
-.gj-pulse.two { animation-delay: 1.4s; }
-@keyframes gjPulse {
-  0%   { transform: scale(0.45); opacity: 0.55; }
-  70%  { opacity: 0; }
-  100% { transform: scale(3.2); opacity: 0; }
-}
-.gj-label {
-  font-family: "Inter", system-ui, sans-serif; font-weight: 700;
-  font-size: 13px; fill: var(--ink);
-}
-.gj-sub {
-  font-family: "Inter", system-ui, sans-serif; font-weight: 500;
-  font-size: 9.5px; fill: var(--body);
-}
-
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
   .reveal, .reveal-x { opacity: 1 !important; transform: none !important; }
   html { scroll-behavior: auto; }
-  /* hide animated pulse rings, leave the solid markers */
-  .gj-pulse { opacity: 0 !important; }
 }
 
 /* ---------- responsive ---------- */
@@ -774,7 +678,6 @@ section { position: relative; }
   .values { grid-template-columns: repeat(2, 1fr); }
   .team-grid { grid-template-columns: repeat(2, 1fr); }
   .split { grid-template-columns: 1fr; }
-  .split.flip .split-media { order: 0; }
   .footer-top { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 760px) {
@@ -819,7 +722,6 @@ section { position: relative; }
   font-size: clamp(1.05rem, 1.6vw, 1.18rem); color: var(--body);
   max-width: 620px; margin-left: auto; margin-right: auto;
 }
-.hero-center .chips { justify-content: center; }
 .hero-center h1 { font-size: clamp(2.7rem, 6.6vw, 4.8rem); margin-bottom: 0.7rem; }
 .about-hero .hero-lead { font-size: clamp(1.02rem, 1.5vw, 1.18rem); }
 
