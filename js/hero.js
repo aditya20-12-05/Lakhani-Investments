@@ -59,16 +59,18 @@
       for (let yy = y0; yy <= y1; yy += step)
         for (let xx = x0; xx <= x1; xx += step) m.push({ nx: xx, ny: yy, color });
     }
-    rect(5.6, 21.5, 73.3, baseY, C.bar1);          // bar 1 (short, sage)
+    rect(5.6, 21.3, 73.3, baseY, C.bar1);          // bar 1 (short, sage)
     rect(31.6, 47.7, 46.5, baseY, C.bar2);         // bar 2 (tall)
-    rect(57.9, 74.0, 56.4, 72.5, C.bar3);          // bar 3 top cap
-    rect(57.9, 74.0, 81.4, baseY, C.bar3);         // bar 3 lower body (notch gap between)
+    rect(57.9, 74.0, 56.4, 72.1, C.bar3);          // bar 3 top cap
+    rect(57.9, 74.0, 81.8, baseY, C.bar3);         // bar 3 lower body (notch gap between)
     rect(84.1, 100.0, 28.1, baseY, C.bar4);        // bar 4 (tallest, darkest)
-    // rising arrow: start low-left, peak, dip to a valley, climb to the tip,
-    // then the two arrowhead barbs.
+    // rising arrow: thin shaft along the true centreline (start low-left, peak,
+    // dip to a valley, climb to the head), then the solid pentagon arrowhead
+    // traced as its perimeter so it reads sharp like the original.
     const segs = [
-      [[0, 56.8], [39.9, 16.9]], [[39.9, 16.9], [58.7, 35.5]], [[58.7, 35.5], [98.3, 0]],
-      [[98.3, 0], [85.1, 0]], [[98.3, 0], [98.3, 13.2]],
+      [[1.9, 58.9], [39.9, 20.7]], [[39.9, 20.7], [58.7, 39.5]], [[58.7, 39.5], [90.7, 7.4]],
+      [[85.1, 0], [98.3, 0]], [[98.3, 0], [98.3, 13.2]], [[98.3, 13.2], [92.8, 9.4]],
+      [[92.8, 9.4], [88.7, 5.6]], [[88.7, 5.6], [85.1, 0]],
     ];
     segs.forEach(([[ax, ay], [bx, by]]) => {
       const len = Math.hypot(bx - ax, by - ay);

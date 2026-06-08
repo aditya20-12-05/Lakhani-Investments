@@ -6,17 +6,19 @@
   // tallest) with bar 3 split by a notch, under a rising arrow that peaks,
   // dips, then climbs to the top-right. The notch is a real gap (two rects)
   // rather than a white fill, so it stays correct on dark backgrounds too.
+  // The arrow is a thin stroked shaft (true 5.6 width, butt caps, miter
+  // joins) feeding a solid pentagon arrowhead, so it reads sharp like the
+  // original rather than soft and rounded.
   const logoIcon = `
     <svg class="logo-icon" viewBox="-6 -6 112 128" aria-hidden="true">
-      <rect x="5.6"  y="73.3" width="15.9" height="42.6" fill="#6c9f76"/>
+      <rect x="5.6"  y="73.3" width="15.7" height="42.6" fill="#6c9f76"/>
       <rect x="31.6" y="46.5" width="16.1" height="69.4" fill="#078545"/>
-      <rect x="57.9" y="56.4" width="16.1" height="16.1" fill="#087140"/>
-      <rect x="57.9" y="81.4" width="16.1" height="34.5" fill="#087140"/>
+      <rect x="57.9" y="56.4" width="16.1" height="15.7" fill="#087140"/>
+      <rect x="57.9" y="81.8" width="16.1" height="34.1" fill="#087140"/>
       <rect x="84.1" y="28.1" width="15.9" height="87.8" fill="#026739"/>
-      <path d="M0 56.8 L39.9 16.9 L58.7 35.5 L98.3 0" fill="none" stroke="#0058a8"
-            stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M98.3 0 L85.1 0 M98.3 0 L98.3 13.2" fill="none" stroke="#0058a8"
-            stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M1.9 58.9 L39.9 20.7 L58.7 39.5 L90.7 7.4" fill="none" stroke="#0058a8"
+            stroke-width="5.6" stroke-linecap="butt" stroke-linejoin="miter"/>
+      <path d="M85.1 0 L98.3 0 L98.3 13.2 L92.8 9.4 L88.7 5.6 Z" fill="#0058a8"/>
     </svg>`;
 
   const brand = (href) => `
