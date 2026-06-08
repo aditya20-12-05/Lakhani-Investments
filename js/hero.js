@@ -16,11 +16,12 @@
     if (hint) hint.remove();
   }
 
+  // Colours sampled from assets/logo.png so the constellation matches the mark.
   const C = {
-    bar1: "141,181,160", // #8db5a0
-    bar2: "46,158,91",   // #2e9e5b
-    bar3: "0,128,64",    // #008040
-    bar4: "0,102,58",    // #00663a
+    bar1: "108,159,118", // #6c9f76 (sage)
+    bar2: "7,133,69",    // #078545
+    bar3: "8,113,64",    // #087140
+    bar4: "2,103,57",    // #026739
     blue: "0,88,168",    // #0058a8
   };
   // Colours in a flat list + reusable buckets so the connecting lines can be
@@ -52,19 +53,22 @@
   // ----- build target points from the logo geometry (normalised space) -----
   function buildModel() {
     const m = [];
-    const baseY = 64, step = 4;
-    function bar(x0, w, topY, color) {
-      for (let yy = topY; yy <= baseY; yy += step)
-        for (let xx = x0; xx <= x0 + w; xx += step) m.push({ nx: xx, ny: yy, color });
+    // Coordinates traced from the real logo (viewBox-style space, baseline 116).
+    const baseY = 115.9, step = 5.2;
+    function rect(x0, x1, y0, y1, color) {
+      for (let yy = y0; yy <= y1; yy += step)
+        for (let xx = x0; xx <= x1; xx += step) m.push({ nx: xx, ny: yy, color });
     }
-    bar(6, 14, 40, C.bar1);
-    bar(24, 14, 30, C.bar2);
-    bar(42, 14, 20, C.bar3);
-    bar(60, 14, 12, C.bar4);
-    // rising arrow polyline + arrowhead
+    rect(5.6, 21.5, 73.3, baseY, C.bar1);          // bar 1 (short, sage)
+    rect(31.6, 47.7, 46.5, baseY, C.bar2);         // bar 2 (tall)
+    rect(57.9, 74.0, 56.4, 72.5, C.bar3);          // bar 3 top cap
+    rect(57.9, 74.0, 81.4, baseY, C.bar3);         // bar 3 lower body (notch gap between)
+    rect(84.1, 100.0, 28.1, baseY, C.bar4);        // bar 4 (tallest, darkest)
+    // rising arrow: start low-left, peak, dip to a valley, climb to the tip,
+    // then the two arrowhead barbs.
     const segs = [
-      [[4, 38], [20, 20]], [[20, 20], [30, 28]], [[30, 28], [52, 6]],
-      [[52, 6], [42, 8]], [[52, 6], [50, 19]],
+      [[0, 56.8], [39.9, 16.9]], [[39.9, 16.9], [58.7, 35.5]], [[58.7, 35.5], [98.3, 0]],
+      [[98.3, 0], [85.1, 0]], [[98.3, 0], [98.3, 13.2]],
     ];
     segs.forEach(([[ax, ay], [bx, by]]) => {
       const len = Math.hypot(bx - ax, by - ay);
@@ -80,11 +84,19 @@
 
   function layout() {
     const box = Math.min(W * 0.5, H * 0.5);
-    scale = box / 78;
+    // Fit and centre the mark from its actual bounds, so the model can use the
+    // real logo proportions without any hand-tuned offsets.
+    let minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    for (const p of MODEL) {
+      if (p.nx < minx) minx = p.nx; if (p.nx > maxx) maxx = p.nx;
+      if (p.ny < miny) miny = p.ny; if (p.ny > maxy) maxy = p.ny;
+    }
+    const mcx = (minx + maxx) / 2, mcy = (miny + maxy) / 2;
+    scale = (box * 0.86) / Math.max(maxx - minx, maxy - miny);
     const cx = W / 2, cy = H * 0.43;
     targets = MODEL.map((p) => ({
-      x: cx + (p.nx - 39) * scale,
-      y: cy + (p.ny - 35) * scale,
+      x: cx + (p.nx - mcx) * scale,
+      y: cy + (p.ny - mcy) * scale,
       color: p.color,
     }));
     // line pairs between neighbouring target points (drawn when assembled).

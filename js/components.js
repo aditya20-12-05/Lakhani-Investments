@@ -2,17 +2,21 @@
 (function () {
   const path = location.pathname.split("/").pop() || "index.html";
 
+  // Geometry traced from assets/logo.png: four bars (short, tall, medium,
+  // tallest) with bar 3 split by a notch, under a rising arrow that peaks,
+  // dips, then climbs to the top-right. The notch is a real gap (two rects)
+  // rather than a white fill, so it stays correct on dark backgrounds too.
   const logoIcon = `
-    <svg class="logo-icon" viewBox="0 0 100 100" aria-hidden="true">
-      <rect x="6"  y="58" width="15" height="34" rx="2" fill="#8db5a0"/>
-      <rect x="27" y="44" width="15" height="48" rx="2" fill="#2e9e5b"/>
-      <rect x="48" y="32" width="15" height="60" rx="2" fill="#008040"/>
-      <rect x="51" y="55" width="9"  height="7"  fill="#ffffff"/>
-      <rect x="69" y="22" width="15" height="70" rx="2" fill="#00663a"/>
-      <path d="M4 54 L29 29 L45 41 L82 9" fill="none" stroke="#0058a8"
-            stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M82 9 L66 11 M82 9 L80 26" fill="none" stroke="#0058a8"
-            stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <svg class="logo-icon" viewBox="-6 -6 112 128" aria-hidden="true">
+      <rect x="5.6"  y="73.3" width="15.9" height="42.6" fill="#6c9f76"/>
+      <rect x="31.6" y="46.5" width="16.1" height="69.4" fill="#078545"/>
+      <rect x="57.9" y="56.4" width="16.1" height="16.1" fill="#087140"/>
+      <rect x="57.9" y="81.4" width="16.1" height="34.5" fill="#087140"/>
+      <rect x="84.1" y="28.1" width="15.9" height="87.8" fill="#026739"/>
+      <path d="M0 56.8 L39.9 16.9 L58.7 35.5 L98.3 0" fill="none" stroke="#0058a8"
+            stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M98.3 0 L85.1 0 M98.3 0 L98.3 13.2" fill="none" stroke="#0058a8"
+            stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
 
   const brand = (href) => `
