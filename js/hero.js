@@ -55,18 +55,22 @@
     const m = [];
     // Coordinates traced from the real logo (viewBox-style space, baseline 116).
     const baseY = 115.9, step = 5.2;
-    function rect(x0, x1, y0, y1, color) {
+    // Each point carries an element id (el) so the connecting lines can stay
+    // within one shape: the four bars and the arrow each wire up on their own,
+    // never bridging across the gaps between them.
+    function rect(x0, x1, y0, y1, color, el) {
       for (let yy = y0; yy <= y1; yy += step)
-        for (let xx = x0; xx <= x1; xx += step) m.push({ nx: xx, ny: yy, color });
+        for (let xx = x0; xx <= x1; xx += step) m.push({ nx: xx, ny: yy, color, el });
     }
-    rect(5.6, 21.3, 73.3, baseY, C.bar1);          // bar 1 (short, sage)
-    rect(31.6, 47.7, 46.5, baseY, C.bar2);         // bar 2 (tall)
-    rect(57.9, 74.0, 56.4, 72.1, C.bar3);          // bar 3 top cap
-    rect(57.9, 74.0, 81.8, baseY, C.bar3);         // bar 3 lower body (notch gap between)
-    rect(84.1, 100.0, 28.1, baseY, C.bar4);        // bar 4 (tallest, darkest)
+    rect(5.6, 21.3, 73.3, baseY, C.bar1, "b1");    // bar 1 (short, sage)
+    rect(31.6, 47.7, 46.5, baseY, C.bar2, "b2");   // bar 2 (tall)
+    rect(57.9, 74.0, 56.4, 72.1, C.bar3, "b3");    // bar 3 top cap
+    rect(57.9, 74.0, 81.8, baseY, C.bar3, "b3");   // bar 3 lower body (notch gap between)
+    rect(84.1, 100.0, 28.1, baseY, C.bar4, "b4");  // bar 4 (tallest, darkest)
     // rising arrow: thin shaft along the true centreline (start low-left, peak,
     // dip to a valley, climb to the head), then the solid pentagon arrowhead
-    // traced as its perimeter so it reads sharp like the original.
+    // traced as its perimeter so it reads sharp like the original. All of it is
+    // one element so the shaft and head wire into a single connected shape.
     const segs = [
       [[1.9, 58.9], [39.9, 20.7]], [[39.9, 20.7], [58.7, 39.5]], [[58.7, 39.5], [90.7, 7.4]],
       [[85.1, 0], [98.3, 0]], [[98.3, 0], [98.3, 13.2]], [[98.3, 13.2], [92.8, 9.4]],
@@ -77,7 +81,7 @@
       const n = Math.max(2, Math.round(len / 3));
       for (let i = 0; i <= n; i++) {
         const k = i / n;
-        m.push({ nx: ax + (bx - ax) * k, ny: ay + (by - ay) * k, color: C.blue });
+        m.push({ nx: ax + (bx - ax) * k, ny: ay + (by - ay) * k, color: C.blue, el: "arrow" });
       }
     });
     return m;
@@ -100,17 +104,20 @@
       x: cx + (p.nx - mcx) * scale,
       y: cy + (p.ny - mcy) * scale,
       color: p.color,
+      el: p.el,
     }));
-    // line pairs between neighbouring target points (drawn when assembled).
-    // Only join points of the same colour so the four bars and the arrow read
-    // as distinct shapes instead of merging into one mesh.
+    // Line pairs between neighbouring target points (drawn when assembled).
+    // Join points only within the same element, and reach ~1.55x the grid step
+    // so every dot links to its orthogonal AND diagonal neighbours. That makes
+    // each bar and the arrow fill in as one fully connected mesh, while the
+    // notch gap and the spaces between elements stay open.
     pairs = [];
-    const TH = (scale * 5.2) ** 2;
+    const TH = (scale * 5.2 * 1.55) ** 2;
     for (let i = 0; i < targets.length; i++) {
       let made = 0;
       const ci = COLORS.indexOf(targets[i].color);
-      for (let j = i + 1; j < targets.length && made < 3; j++) {
-        if (targets[i].color !== targets[j].color) continue;
+      for (let j = i + 1; j < targets.length && made < 5; j++) {
+        if (targets[i].el !== targets[j].el) continue;
         const dx = targets[i].x - targets[j].x, dy = targets[i].y - targets[j].y;
         if (dx * dx + dy * dy < TH) { pairs.push([i, j, ci]); made++; }
       }
