@@ -204,6 +204,33 @@ body.menu-open .nav-toggle span::after { top: 0; transform: rotate(-45deg); }
 .intro-hint::before, .intro-hint::after { content: ""; width: 26px; height: 1px; background: currentColor; opacity: 0.6; }
 @keyframes hintPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.7; } }
 
+/* Centre cue: marks the exact spot the cursor should rest for the mark to
+   snap together. Its overall opacity is driven by hero.js (bright when the
+   logo is scattered, fading to nothing as it forms), so it invites the
+   gesture and then gets out of the way. */
+.center-cue {
+  position: absolute; left: 50%; top: 43%; transform: translate(-50%, -50%);
+  z-index: 2; width: 26px; height: 26px; pointer-events: none; opacity: 0;
+  color: var(--blue);
+}
+.center-cue .ring { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid currentColor; opacity: 0.55; }
+.center-cue .dot {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+}
+.center-cue .ping {
+  position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid currentColor;
+  animation: cuePing 2.4s var(--ease) infinite;
+}
+@keyframes cuePing {
+  0%   { transform: scale(0.55); opacity: 0.6; }
+  70%  { opacity: 0; }
+  100% { transform: scale(2.3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .center-cue .ping { animation: none; }
+}
+
 /* ---------- hero message stage ---------- */
 .hero-content {
   position: relative; overflow: hidden;

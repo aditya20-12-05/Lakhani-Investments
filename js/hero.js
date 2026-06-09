@@ -11,9 +11,14 @@
   // cannot happen. On those devices keep the mark gently formed and drop the
   // cursor hint, so mobile visitors see the brand at once, not scattered dust.
   const coarse = matchMedia("(hover: none)").matches;
+  // Centre cue: a reticle marking where the cursor should rest for the mark to
+  // form. Pointless without a hover pointer, so drop it (with the hint) on
+  // touch, where the logo simply holds formed.
+  let cue = document.querySelector(".center-cue");
   if (coarse) {
     const hint = document.querySelector(".intro-hint");
     if (hint) hint.remove();
+    if (cue) { cue.remove(); cue = null; }
   }
 
   // Colours sampled from assets/logo.png so the constellation matches the mark.
@@ -192,6 +197,10 @@
       aTarget = 0.08 + 0.34 * (s * s);
     }
     globalA += (aTarget - globalA) * 0.13;
+
+    // Fade the centre cue out as the mark assembles: bright while it is dust,
+    // gone once the cursor is in the right spot and the logo has formed.
+    if (cue) cue.style.opacity = (0.85 * (1 - clamp(globalA, 0, 1))).toFixed(3);
 
     // connecting lines (logo wireframe): fade in with assembly.
     // Skipped entirely in lite mode — this is the most expensive pass.
